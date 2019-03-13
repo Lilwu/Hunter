@@ -14,13 +14,10 @@ public class ItemSetting : MonoBehaviour
         inventory = FindObjectOfType<Inventory>();
     }
 
-    private void Update()
+    public void PickUpItem()
     {
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            GetComponent<ItemBase>().OnPickUp();
-            inventory.AddItem(setting);
-            Debug.Log("消除物件" + setting.ItemName);
-        }
+        GetComponent<ItemBase>().OnPickUp();
+        inventory.AddItem(setting);
+        Debug.Log("消除物件" + setting.ItemName);
     }
 }
