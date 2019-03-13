@@ -24,6 +24,12 @@ public class InventoryInput : MonoBehaviour
         hotkeySlot = hotkeySlotParent.GetComponentsInChildren<HotkeySlot>();
     }
 
+    private void Start()
+    {
+        equipmentPanelGameObject.SetActive(false);
+        inventoryPanelGameObject.SetActive(false);
+    }
+
     void Update()
     {
         for (int i = 0; i < toggleInventoryKeys.Length; i++)
