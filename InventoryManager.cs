@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+
 public class InventoryManager : MonoBehaviour
 {
     public int Health = 50;
@@ -11,8 +12,10 @@ public class InventoryManager : MonoBehaviour
     private HotkeyBar hotkeyBar;
     public ItemTooltip itemTooltip;
     public Image draggableItem;
+    public GameObject Hand;
 
     private ItemSlot draggedSlot;
+    
 
     private void OnValidate()
     {
@@ -160,7 +163,6 @@ public class InventoryManager : MonoBehaviour
                 print(hit.collider.tag);
                 print(itemSlot.Item.name);
                 Object obj = Resources.Load(itemSlot.Item.name);
-
                 GameObject gobj = Instantiate(obj) as GameObject;
                 gobj.transform.position = hit.point;
 
@@ -254,22 +256,35 @@ public class InventoryManager : MonoBehaviour
 
     public void Equip(EquippableItem item)
     {
-        if(inventory.RemoveItem(item))
+        if (inventory.RemoveItem(item))
         {
             EquippableItem previousItem;
-            if(equipmentPanel.AddItem(item , out previousItem))
+            if (equipmentPanel.AddItem(item, out previousItem))
             {
-                if(previousItem != null)
+                if (previousItem != null)
                 {
                     inventory.AddItem(previousItem);
                     previousItem.Unequip(this);
                 }
                 item.Equip(this);
+
+
+                //裝備武器時同步到玩家手上 20190313
+                if (item.equipmentType == EquipmentType.Weapon)
+                {
+                    Object obj = Resources.Load(item.ItemName);
+                    GameObject gobj = Instantiate(obj) as GameObject;
+
+                    gobj.tag = "Player";
+                    gobj.transform.parent = Hand.transform;
+                    gobj.transform.position = Hand.transform.position;
+                    gobj.transform.rotation = Hand.transform.rotation;
+                }
             }
-        }
-        else
-        {
-            inventory.AddItem(item);
+            else
+            {
+                inventory.AddItem(item);
+            }
         }
     }
 
@@ -279,6 +294,11 @@ public class InventoryManager : MonoBehaviour
         {
             item.Unequip(this);
             inventory.AddItem(item);
+
+            if (item.equipmentType == EquipmentType.Weapon)
+            {
+                Destroy(Hand.transform.GetChild(0).gameObject);
+            }
         }
     }
 
