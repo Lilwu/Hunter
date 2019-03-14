@@ -26,7 +26,6 @@ public class RestorableItem : Item
 
     public virtual void Use(InventoryManager inventoryManager)
     {
-        inventoryManager.Health += 50;
         Debug.Log("增加玩家50滴血量");
     }
 
