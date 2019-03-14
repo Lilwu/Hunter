@@ -5,17 +5,19 @@ using UnityEngine.EventSystems;
 
 public class InventoryManager : MonoBehaviour
 {
-    public int Health = 50;
-
-    private Inventory inventory;
-    private EquipmentPanel equipmentPanel;
-    private HotkeyBar hotkeyBar;
     public ItemTooltip itemTooltip;
     public Image draggableItem;
     public GameObject Hand;
 
+    private Inventory inventory;
+    private EquipmentPanel equipmentPanel;
+    private HotkeyBar hotkeyBar;
     private ItemSlot draggedSlot;
-    
+
+    //裝備武器事件
+    public delegate void WeaponInHandAction();
+    public static event WeaponInHandAction WeaponInHandEvent;
+
 
     private void OnValidate()
     {
@@ -279,6 +281,11 @@ public class InventoryManager : MonoBehaviour
                     gobj.transform.parent = Hand.transform;
                     gobj.transform.position = Hand.transform.position;
                     gobj.transform.rotation = Hand.transform.rotation;
+
+                    if(WeaponInHandEvent != null)
+                    {
+                        WeaponInHandEvent();
+                    }
                 }
             }
             else
