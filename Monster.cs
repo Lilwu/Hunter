@@ -9,6 +9,7 @@ public class Monster : MonoBehaviour
     public int m_maxHp;
     public int moneyMix;
     public int moneyMax;
+    public int m_attack;
 
     private void Awake()
     {
