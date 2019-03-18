@@ -12,6 +12,8 @@ public class MonsterHealth : MonoBehaviour
     public AudioClip hitClip;
     public AudioClip deatlClip;
 
+    public Material m_material;
+
     //HUD
     public Image m_health;
     public Text m_nameText;
@@ -19,6 +21,7 @@ public class MonsterHealth : MonoBehaviour
     private float maxHealth;
     private int currentHealth;
     private bool isDead;
+    private bool isSinking;
 
     //血條追隨攝影機
     public GameObject m_healthBar;
@@ -52,8 +55,6 @@ public class MonsterHealth : MonoBehaviour
         m_audioSource.PlayOneShot(hurtClip);
 
         //怪物噴血 20190308
-
-
         GameObject bloody = Resources.Load("Bloody_Effect") as GameObject;
         GameObject attckEffect = Resources.Load("attckEffect") as GameObject;
         //GameObject smokeEffect01 = Resources.Load("smokeEffect01") as GameObject;
@@ -80,15 +81,21 @@ public class MonsterHealth : MonoBehaviour
         m_audioSource.PlayOneShot(deatlClip);
         isDead = true;
 
+        tag = "Untagged";
         GetComponent<NavMeshAgent>().enabled = false;
         GetComponent<Collider>().isTrigger = true;  //防止金幣彈走
         GetComponent<Rigidbody>().isKinematic = true; //防止死亡時移動
         GetComponent<MonsterController>().enabled = false;
+        GetComponent<GenerateFont>().enabled = false;
         GetComponent<AudioSource>().clip = null;
         GetComponent<Monster>().FallMoney(this.transform);
     }
 
-
+    public void StartSinking()
+    {
+        isSinking = true;
+        Destroy(gameObject, 3f);
+    }
 
     private void Update()
     {
@@ -103,6 +110,5 @@ public class MonsterHealth : MonoBehaviour
         {
             _animator.SetBool("Damaged", false);
         }
-
     }
 }
