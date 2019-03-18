@@ -158,7 +158,7 @@ public class InventoryManager : MonoBehaviour
         //將物品欄上物品移至地面後新增物品並刪除圖案 TODO:依物品數量更新文字 【20190303】
         RaycastHit hit = new RaycastHit();
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000))
+        if (Physics.Raycast(ray, out hit, 100))
         {
             if (hit.collider.tag == "Floor" && !EventSystem.current.IsPointerOverGameObject()) 
             {
