@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     static int _mp;
     static int _lv;
     static int _money;
+    static int _attack;
 
     public Text moneyText;
     static Player instance;
@@ -28,6 +29,7 @@ public class Player : MonoBehaviour
             _maxMp = 499;
             _mp = _maxMp;
             _money = 1;
+            _attack = 20;
 
             _lv = 1;
         }
@@ -48,6 +50,12 @@ public class Player : MonoBehaviour
     {
         _money += money;
         moneyText.text = _money.ToString();
+    }
+
+    public void AddWeaponAttack(int attack)
+    {
+        _attack += attack;
+        print("目前攻擊力為：" + _attack);
     }
 
     //讀取HP及MP
@@ -74,6 +82,11 @@ public class Player : MonoBehaviour
     public int MONEY
     {
         get { return _money;}
+    }
+
+    public int ATTACK
+    {
+        get { return _attack; }
     }
 
 }
