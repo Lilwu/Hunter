@@ -16,6 +16,11 @@ public class Money : MonoBehaviour
         playerController = FindObjectOfType<PlayerController>();
     }
 
+    public void OnPickUp()
+    {
+        Destroy(gameObject);
+    }
+
     public void SetMoney(int min, int max)
     {
         money = Random.Range(min, max);
@@ -27,5 +32,6 @@ public class Money : MonoBehaviour
         Debug.Log("你獲得了金幣:" + money);
         player.AddMoney(money);
         gameObject.SetActive(false);
+        amonutText.text = "金幣(" + (money.ToString()) + ")";
     }
 }
