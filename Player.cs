@@ -9,12 +9,16 @@ public class Player : MonoBehaviour
     static int _hp;
     static int _maxMp;
     static int _mp;
-    static int _lv;
     static int _money;
     static int _attack;
+    static int _lv;
+    static int _exp;
 
     public Text moneyText;
     static Player instance;
+
+    //LevelUp
+    public Text levelText;
 
     private void Awake()
     {
@@ -32,6 +36,7 @@ public class Player : MonoBehaviour
             _attack = 20;
 
             _lv = 1;
+            _exp = 0;
         }
         else if (this != instance)
         {
@@ -44,6 +49,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         moneyText.text = _money.ToString();
+        levelText.text = _lv.ToString();
     }
 
     public void AddMoney(int money)
@@ -58,7 +64,20 @@ public class Player : MonoBehaviour
         print("目前攻擊力為：" + _attack);
     }
 
-    //讀取HP及MP
+    public void AddPlayerExp(int exp)
+    {
+        _exp += exp;
+        print("目前經驗值為：" + _exp);
+        CheckLevelIsUp();
+    }
+
+    public void CheckLevelIsUp()
+    {
+        LevelUP();
+        levelText.text = _lv.ToString();
+    }
+
+    //讀取各屬性
     public int HP
     {
         get { return _hp; }
@@ -75,18 +94,37 @@ public class Player : MonoBehaviour
     {
         get { return _maxMp; }
     }
-    public int LV
-    {
-        get { return _lv; }
-    }
     public int MONEY
     {
         get { return _money;}
     }
-
     public int ATTACK
     {
         get { return _attack; }
     }
+    public int LV
+    {
+        get { return _lv; }
+    }
+    public int EXP
+    {
+        get { return _exp; }
+    }
 
+    private void LevelUP()
+    {
+        GameObject levelupFx = Resources.Load("LevelUp_Fx") as GameObject;
+        if (_exp >= 30 && _exp < 80)
+            _lv = 2;
+        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
+        if (_exp >= 80 && _exp < 150)
+            _lv = 3;
+        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
+        if (_exp >= 150 && _exp < 250)
+            _lv = 4;
+        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
+        if (_lv >= 250)
+            _lv = 5;
+        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
+    }
 }
