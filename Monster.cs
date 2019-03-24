@@ -10,6 +10,7 @@ public class Monster : MonoBehaviour
     public int moneyMix;
     public int moneyMax;
     public int m_attack;
+    public int m_exp;
 
     private void Awake()
     {
@@ -21,5 +22,11 @@ public class Monster : MonoBehaviour
         GameObject coins = Resources.Load("Coins") as GameObject;
         Instantiate(coins).transform.position = transform.GetChild(0).transform.position;
         FindObjectOfType<Money>().SetMoney(moneyMix, moneyMax);
+    }
+
+    public void GetExp()
+    {
+        FindObjectOfType<Player>().AddPlayerExp(m_exp);
+        print("你獲得了" + m_exp + "的經驗值");
     }
 }
