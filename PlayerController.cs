@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     private int attack01ID = Animator.StringToHash("Base Layer.c_attack01");
     private int pickupID = Animator.StringToHash("Base Layer.c_pickup");
     private int gethitID = Animator.StringToHash("Base Layer.c_gethit");
+    private int skill01ID = Animator.StringToHash("Base Layer.c_firedancing");
+
     private AnimatorStateInfo Bs;
 
     private bool WeaponInHand; //判斷武器是否在手上
@@ -24,6 +26,8 @@ public class PlayerController : MonoBehaviour
     public AudioClip attackVoiceClip;
     public AudioClip pickupSoundClip;
     public AudioClip hurtVoiceClip;
+    public AudioClip restoreSound;
+    public AudioClip fireDanceClip;
     private AudioClip itemAudio;
 
     //MOVEMENT
@@ -89,7 +93,6 @@ public class PlayerController : MonoBehaviour
                 _moveDir = transform.TransformDirection(_moveDir);
                 _moveDir *= Speed;
             }
-
         }
 
         _moveDir.y -= Gravity * Time.deltaTime;
@@ -103,11 +106,17 @@ public class PlayerController : MonoBehaviour
             _anim.SetBool("IsAttack", true);
         }
 
-        if(Bs.fullPathHash == attack01ID || Bs.fullPathHash == pickupID || Bs.fullPathHash == gethitID)
+        if(Bs.fullPathHash == attack01ID || Bs.fullPathHash == pickupID || Bs.fullPathHash == gethitID || Bs.fullPathHash == skill01ID)
         {
             _anim.SetBool("IsAttack" , false);
             _anim.SetBool("IsPickup", false);
             _anim.SetBool("GetHit", false);
+
+            if(Bs.fullPathHash == skill01ID)
+            {
+                _anim.SetBool("Skill01", false);
+                AttackOverPositsion(1);
+            }
         }
 
         //Pickup
@@ -119,10 +128,35 @@ public class PlayerController : MonoBehaviour
         {
             _anim.SetBool("IsPickup", true);
         }
+
+        //Skill_FireDancing
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            _anim.SetBool("Skill01", true);
+            _audioSource.PlayOneShot(fireDanceClip);
+
+            GameObject FireDance = Resources.Load("FireDance") as GameObject;
+            Instantiate(FireDance , GameObject.Find("WeaponHand").transform).transform.localPosition = transform.position;
+        }
     }
 
-    public void NewAttackPoint()
+    //使用魔法書 20190322
+    public void UseMagicalCard(string animation , string effect)
     {
+        _anim.SetBool(animation, true);
+        _audioSource.PlayOneShot(fireDanceClip);
+        
+        GameObject Magicaleffect = Resources.Load(effect) as GameObject;
+
+        if(GameObject.Find("MagicEffect").transform.FindChild(effect + "(Clone)") == null)
+        {
+            Instantiate(Magicaleffect, GameObject.Find("MagicEffect").transform).transform.localPosition = transform.position;
+        }
+        else
+        {
+            GameObject.Find(effect + "(Clone)").GetComponent<ParticleSystem>().Play();
+        }
+
 
     }
 
@@ -130,25 +164,32 @@ public class PlayerController : MonoBehaviour
     {
         _audioSource.PlayOneShot(attackVoiceClip , 0.5f);
 
+        Ray ray = new Ray(transform.position + Vector3.up, transform.forward);
+        Debug.DrawRay(ray.origin, ray.direction * 2.0f, Color.cyan);
+
+
         if (WeaponInHand)
         {
             _audioSource.PlayOneShot(itemAudio);
         }
 
-        if(mosInRange && mNearMonster != null)
+        if(Physics.Raycast(ray, out RaycastHit hit, 1.0f))
         {
-            int r_attack = Random.Range(_player.ATTACK - 15, _player.ATTACK + 20);
+            if (hit.collider.tag == "Monster")
+            {
+                int r_attack = Random.Range(_player.ATTACK - 15, _player.ATTACK + 20);
 
-            FindObjectOfType<MonsterHealth>().TakeDamge(r_attack);
-            FindObjectOfType<GenerateFont>().AttackPointFont(r_attack);
-            FindObjectOfType<DamageFont>().playerAttackPoint = r_attack;
+                FindObjectOfType<MonsterHealth>().TakeDamge(r_attack);
+                FindObjectOfType<GenerateFont>().AttackPointFont(r_attack);
+                FindObjectOfType<DamageFont>().playerAttackPoint = r_attack;
 
-            print(r_attack);
+                print(r_attack);
+            }
         }
     }
-    public void AttackOverPositsion() //攻擊結束時位移 event
+    public void AttackOverPositsion(int distance) //攻擊結束時位移 event
     {
-        _moveDir = Vector3.forward * 2;
+        _moveDir = Vector3.forward * distance;
         _moveDir = transform.TransformDirection(_moveDir);
         _moveDir.y -= Gravity * Time.deltaTime;
         _characterController.Move(_moveDir * Time.deltaTime);
@@ -184,7 +225,6 @@ public class PlayerController : MonoBehaviour
 
     private ItemBase mItemToPickup = null;
     private Money mMoneyToPickup = null;
-    private MonsterHealth mNearMonster = null;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -197,11 +237,6 @@ public class PlayerController : MonoBehaviour
             mItemToPickup = item;
             inventoryInput.OpenMessagePanel("");
         }
-
-        MonsterHealth mos = other.GetComponent<MonsterHealth>();
-        if (mos != null && other.tag == "Monster")
-            mNearMonster = mos;
-            mosInRange = true;
 
         Money money = other.GetComponent<Money>();
         if (money != null && other.tag == "Money")
@@ -220,10 +255,6 @@ public class PlayerController : MonoBehaviour
             inventoryInput.CloseMessagePanel();
             mItemToPickup = null;
         }
-
-        MonsterHealth mos = other.GetComponent<MonsterHealth>();
-        if (mos != null && other.tag == "Monster")
-            mosInRange = false;
 
         Money money = other.GetComponent<Money>();
         if (money != null && other.tag == "Money")
