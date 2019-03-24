@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class HotkeySlot : ItemSlot
 {
     public KeyCode _key;
-
     public Button _button;
+
+    //冷卻系統
+    public Image coldtimeImage;
 
     private void Awake()
     {
@@ -20,6 +22,9 @@ public class HotkeySlot : ItemSlot
             return true;
 
         RestorableItem restorableItem = item as RestorableItem;
-        return restorableItem != null;
+        MagicalcardItem magicalcard = item as MagicalcardItem;
+        return restorableItem || magicalcard != null;
     }
+
+
 }
