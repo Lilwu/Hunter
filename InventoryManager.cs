@@ -18,6 +18,12 @@ public class InventoryManager : MonoBehaviour
     public delegate void WeaponInHandAction();
     public static event WeaponInHandAction WeaponInHandEvent;
 
+    //魔法冷卻
+    [SerializeField] GameObject warningPanel; //通知玩家冷卻期間無法連續使用魔法
+    private float timer; //計算器初始值
+    private bool isStartTimer; //是否開始計算時間
+    private HotkeySlot isHotkeySlot; //使用中的熱鍵
+    private MagicalcardItem isMagicCard; //使用中的魔法;
 
     private void OnValidate()
     {
@@ -131,6 +137,13 @@ public class InventoryManager : MonoBehaviour
         {
             itemTooltip.transform.position = Input.mousePosition;
             itemTooltip.ShowTooltip(restorableItem);
+        }
+
+        MagicalcardItem magicalcardItem = itemSlot.Item as MagicalcardItem;
+        if(magicalcardItem != null)
+        {
+            itemTooltip.transform.position = Input.mousePosition;
+            itemTooltip.ShowTooltip(magicalcardItem);
         }
     }
 
@@ -334,7 +347,6 @@ public class InventoryManager : MonoBehaviour
             if (dragToHotkeyItem != null) dragToHotkeyItem = (RestorableItem)dropItemSlot.Item;
             if (dropToHotkeyItem != null) dropToHotkeyItem = (RestorableItem)dropItemSlot.Item;
         }
-
     }
 
     //DropItem 20190303
@@ -357,6 +369,43 @@ public class InventoryManager : MonoBehaviour
             {
                 hotkeyBar.RemoveItem(restorable);
                 restorable.Destroy();
+            }
+        }
+
+        if(hotkeySlot.Item is MagicalcardItem && isStartTimer != true)
+        {
+            warningPanel.SetActive(false);
+            //使用魔法書
+            MagicalcardItem magicalcard = (MagicalcardItem)hotkeySlot.Item;
+            magicalcard.Use(this);
+            //print(hotkeySlot);
+            isStartTimer = true;
+            isHotkeySlot = hotkeySlot;
+            isMagicCard = magicalcard;
+        }
+        else //警告：冷卻時間無法持續使用
+        {
+            warningPanel.SetActive(true);
+            warningPanel.GetComponentInChildren<Text>().text = "- " + "目前無法使用" + isMagicCard.ItemName + " -";
+        }
+    }
+
+    private void Update()
+    {
+        //魔法使用時開始計算時間
+        if (isStartTimer)
+        {
+            timer += Time.deltaTime;
+            //print(timer);
+            isHotkeySlot.coldtimeImage.fillAmount = (isMagicCard.coldtime - timer) / isMagicCard.coldtime;
+
+            //恢復魔法初始值
+            if (timer >= isMagicCard.coldtime)
+            {
+                isHotkeySlot.coldtimeImage.fillAmount = 0;
+                timer = 0;
+                isStartTimer = false;
+                warningPanel.SetActive(false);
             }
         }
     }
