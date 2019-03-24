@@ -28,6 +28,31 @@ public class PlayerHealth : MonoBehaviour
         print("目前血量為：" + currentHealth);
     }
 
+    public void AddHp(int amount)
+    {
+        if(currentHealth >= maxHealth)
+        {
+            print("沒發生任何事");
+            return;
+        }
+        else if(currentHealth >= maxHealth -amount && currentHealth <= maxHealth)
+        {
+            currentHealth = (int)maxHealth;
+            playerHealth.fillAmount = currentHealth / maxHealth;
+            healthText.text = currentHealth + "/" + maxHealth;
+
+            print("你的血量已經恢復滿了");
+        }
+        else
+        {
+            currentHealth += amount;
+            playerHealth.fillAmount = currentHealth / maxHealth;
+            healthText.text = currentHealth + "/" + maxHealth;
+
+            print("你增加了" + amount + "滴血");
+        }
+    }
+
     public void TakeDamge(int damage)
     {
         _animator.SetBool("GetHit", true);
@@ -54,5 +79,15 @@ public class PlayerHealth : MonoBehaviour
         healthText.text = 0 + "/" + maxHealth;
         print("你已經死亡！");
         print("目前血量為：" + currentHealth);
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.M))
+        {
+            currentHealth -= 50;
+            playerHealth.fillAmount = currentHealth / maxHealth;
+            healthText.text = currentHealth + "/" + maxHealth;
+        }
     }
 }
