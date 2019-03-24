@@ -11,7 +11,6 @@ public class MonsterController : MonoBehaviour
     public AudioClip attackClip;
 
     //追蹤玩家
-    PlayerController isAttack;
     private Transform player;
     private NavMeshAgent nav;
     private bool playerInRange;
@@ -86,13 +85,12 @@ public class MonsterController : MonoBehaviour
 
     private void Update()
     {
-        if (dis > 2.5f)
+        if (dis > 1.5f)
         {
             GoToPlayer();
         }
-        else if(dis <= 2.5f && dis > 1.5f)
+        else if(dis <= 1f && dis > 0f)
         {
-            nav.destination = player.position;
             _animator.SetBool("IsRun", false);
             _animator.SetBool("IsAttack", true);
         }
