@@ -48,6 +48,23 @@ public class ItemTooltip : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    //魔法卡顯示 20190324
+    public void ShowTooltip(MagicalcardItem item)
+    {
+        ItemNameText.text = item.ItemName;
+        ItemSlotText.text = item.magicalcardType.ToString();
+
+        sb.Length = 0;
+        AddStat(item.damage, "魔法攻擊力");
+        AddStat(item.coldtime, "冷卻時間");
+
+        //調整補助道具顯示顏色(紅色) 20190324
+        ItemStatText.color = Color.red;
+        ItemStatText.text = sb.ToString();
+
+        gameObject.SetActive(true);
+    }
+
     public void HideTooltip()
     {
         gameObject.SetActive(false);
