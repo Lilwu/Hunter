@@ -57,12 +57,10 @@ public class MonsterHealth : MonoBehaviour
         //怪物噴血 20190308
         GameObject bloody = Resources.Load("Bloody_Effect") as GameObject;
         GameObject attckEffect = Resources.Load("attckEffect") as GameObject;
-        //GameObject smokeEffect01 = Resources.Load("smokeEffect01") as GameObject;
-        Instantiate(bloody).transform.localPosition = transform.GetChild(0).transform.position;
-        Instantiate(attckEffect).transform.localPosition = transform.GetChild(0).transform.position;
-        //Instantiate(smokeEffect01).transform.localPosition = transform.GetChild(0).transform.position;
-           
-        gameObject.transform.position -= new Vector3(0, 0, -0.1f);
+        Instantiate(bloody, transform.GetChild(0)).transform.position = transform.position;
+        Instantiate(attckEffect, transform.GetChild(0)).transform.position = transform.position;
+
+        gameObject.transform.position -= Vector3.back * 2;
 
         //HUD
         currentHealth -= damage;
@@ -83,12 +81,13 @@ public class MonsterHealth : MonoBehaviour
 
         tag = "Untagged";
         GetComponent<NavMeshAgent>().enabled = false;
-        GetComponent<Collider>().isTrigger = true;  //防止金幣彈走
+        GetComponent<Collider>().enabled = false;  //防止金幣彈走
         GetComponent<Rigidbody>().isKinematic = true; //防止死亡時移動
         GetComponent<MonsterController>().enabled = false;
         GetComponent<GenerateFont>().enabled = false;
         GetComponent<AudioSource>().clip = null;
         GetComponent<Monster>().FallMoney(this.transform);
+        GetComponent<Monster>().GetExp();
     }
 
     public void StartSinking()
