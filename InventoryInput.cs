@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class InventoryInput : MonoBehaviour
 {
@@ -9,7 +8,6 @@ public class InventoryInput : MonoBehaviour
     [SerializeField] GameObject inventoryPanelGameObject;
     [SerializeField] GameObject messagePanelGameObject;
     [SerializeField] ItemTooltip itemTooltip;
-
     [SerializeField] InventoryManager inventoryManager;
 
     //20190227 SetHotkey
