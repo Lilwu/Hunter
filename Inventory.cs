@@ -115,4 +115,13 @@ public class Inventory : MonoBehaviour
         }
         return number;
     }
+
+    //20190325 購買商品
+    public void BuyToInventory(Item item , int amount)
+    {
+        for (int j = 0; j < amount; j++)
+        {
+            AddItem(item);
+        }
+    }
 }
