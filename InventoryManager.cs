@@ -383,11 +383,12 @@ public class InventoryManager : MonoBehaviour
             isHotkeySlot = hotkeySlot;
             isMagicCard = magicalcard;
         }
-        else //警告：冷卻時間無法持續使用
+        else if((hotkeySlot.Item is MagicalcardItem && isStartTimer != false)) //警告：冷卻時間無法持續使用
         {
             warningPanel.SetActive(true);
             warningPanel.GetComponentInChildren<Text>().text = "- " + "目前無法使用" + isMagicCard.ItemName + " -";
         }
+
     }
 
     private void Update()
