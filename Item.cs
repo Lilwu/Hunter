@@ -11,6 +11,7 @@ public class Item : ScriptableObject
     public string ID { get { return id; } }
     public string ItemName;
     public Sprite Icon;
+    public int Price;
 
     //20190224 
     [Range(1,999)]
