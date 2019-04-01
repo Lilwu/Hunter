@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.EventSystems;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -38,6 +41,26 @@ public class PlayerController : MonoBehaviour
     private bool actionSwitch;
     private bool mosInRange;
     private bool moneyInRange;
+    private bool npcInRange;
+
+    //Clicl TO Move  20190328
+    private NavMeshAgent nav;
+    private bool _playerRunning = false;
+
+    //Cursor
+    public Texture2D cursorMain;
+    public Texture2D cursorBattle;
+    public Texture2D cursorTalk;
+    public Texture2D cursorPickup;
+    public Texture2D cursorUI;
+    public CursorMode cursorMode = CursorMode.Auto;
+    private Vector2 hotSpotCenter;
+    private Vector2 hotSpot = Vector2.zero;
+    private Vector3 hitPosition;
+    private bool hit_npc = false;
+    private bool hit_item = false;
+    private bool hit_enemy = false;
+
 
     private void Awake()
     {
@@ -46,10 +69,12 @@ public class PlayerController : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         inventoryInput = FindObjectOfType<InventoryInput>();
         inventory = FindObjectOfType<Inventory>();
+        nav = GetComponent<NavMeshAgent>();
     }
 
     private void Start()
     {
+        hotSpotCenter = new Vector2(cursorMain.width /4, cursorMain.height / 5);
         _characterController = GetComponent<CharacterController>();
         actionSwitch = false;
         WeaponInHand = false;
@@ -128,16 +153,82 @@ public class PlayerController : MonoBehaviour
         {
             _anim.SetBool("IsPickup", true);
         }
-
-        //Skill_FireDancing
-        if(Input.GetKeyDown(KeyCode.L))
+        //Shopping
+        if(Input.GetKeyDown(KeyCode.Q))
         {
-            _anim.SetBool("Skill01", true);
-            _audioSource.PlayOneShot(fireDanceClip);
-
-            GameObject FireDance = Resources.Load("FireDance") as GameObject;
-            Instantiate(FireDance , GameObject.Find("WeaponHand").transform).transform.localPosition = transform.position;
+            if(npcInRange)
+            {
+                mNpcToShoping.OpenShopPanel();
+                inventoryInput.CloseNpcMessagePanel();
+            }
         }
+
+        //Click TO Control  20190328
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            if (hit_npc && !EventSystem.current.IsPointerOverGameObject() && npcInRange)
+            {
+                mNpcToShoping.OpenShopPanel();
+                inventoryInput.CloseNpcMessagePanel();
+            }
+
+            if (hit_item && !EventSystem.current.IsPointerOverGameObject() && mItemToPickup != null)
+            {
+                _anim.SetBool("IsPickup", true);
+            }
+
+            if(hit_enemy && !EventSystem.current.IsPointerOverGameObject())
+            {
+                _anim.SetBool("IsAttack", true);
+
+                transform.LookAt(hitPosition, Vector3.up);
+            }
+        }
+
+
+        //Cursors Check 201900329
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit, 100))
+        {
+            Cursor.SetCursor(cursorMain, hotSpotCenter, cursorMode);
+            hit_enemy = false;
+
+            if (hit.collider.tag == "NPC" && npcInRange)
+            {
+                Cursor.SetCursor(cursorTalk, hotSpot, cursorMode);
+                hit_npc = true;
+            }
+
+            else if (hit.collider.tag == "Item" && !EventSystem.current.IsPointerOverGameObject())
+            {
+                Cursor.SetCursor(cursorPickup, hotSpot, cursorMode);
+                hit_item = true;
+            }
+
+            else if (hit.collider.tag == "Monster" && !EventSystem.current.IsPointerOverGameObject())
+            {
+                Cursor.SetCursor(cursorBattle, hotSpot, cursorMode);
+                hit_enemy = true;
+                hitPosition = hit.transform.position;
+            }
+        }
+
+        /*
+        if (nav.remainingDistance <= nav.stoppingDistance)
+        {
+            _playerRunning = false;
+        }
+        else
+        {
+            _playerRunning = true;
+        }
+
+        _anim.SetBool("IsRun", _playerRunning);
+        */
+
     }
 
     //使用魔法書 20190322
@@ -156,8 +247,6 @@ public class PlayerController : MonoBehaviour
         {
             GameObject.Find(effect + "(Clone)").GetComponent<ParticleSystem>().Play();
         }
-
-
     }
 
     public void AttackMonster() //攻擊模式 event
@@ -225,6 +314,7 @@ public class PlayerController : MonoBehaviour
 
     private ItemBase mItemToPickup = null;
     private Money mMoneyToPickup = null;
+    private NPC mNpcToShoping = null;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -245,6 +335,14 @@ public class PlayerController : MonoBehaviour
             inventoryInput.OpenMessagePanel("");
             moneyInRange = true;
         }
+
+        NPC npc = other.GetComponent<NPC>();
+        if(npc != null)
+        {
+            npcInRange = true;
+            inventoryInput.OpenNpcMessagePanel("");
+            mNpcToShoping = npc;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -261,6 +359,14 @@ public class PlayerController : MonoBehaviour
         {
             inventoryInput.CloseMessagePanel();
             mItemToPickup = null;
+        }
+
+        NPC npc = other.GetComponent<NPC>();
+        if (npc != null)
+        {
+            inventoryInput.CloseNpcMessagePanel();
+            npcInRange = false;
+            mNpcToShoping = null;
         }
     }
 }
