@@ -10,7 +10,7 @@ public class MonsterHealth : MonoBehaviour
     private AudioSource m_audioSource;
     public AudioClip hurtClip;
     public AudioClip hitClip;
-    public AudioClip deatlClip;
+    public AudioClip deathClip;
 
     public Material m_material;
 
@@ -76,7 +76,7 @@ public class MonsterHealth : MonoBehaviour
     {
         print("消滅了" + _name);
         _animator.SetTrigger("IsDead");
-        m_audioSource.PlayOneShot(deatlClip);
+        m_audioSource.PlayOneShot(deathClip);
         isDead = true;
 
         tag = "Untagged";
