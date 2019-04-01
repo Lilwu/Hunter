@@ -26,7 +26,6 @@ public class ItemSlot : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 
     private Sprite sprite;
 
-
     private Item _item;
     public Item Item
     {
@@ -134,8 +133,6 @@ public class ItemSlot : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
         if (OnPointerExitEvent != null)
             OnPointerExitEvent(this);
     }
-
-
 
     //滑鼠游標移動物品 20190221
     Vector2 originalPosition;
