@@ -39,7 +39,7 @@ public class ItemTooltip : MonoBehaviour
         sb.Length = 0;
         AddStat(item.add_HP, "玩家體力");
         AddStat(item.add_MP, "玩家魔力");
-        AddStat(item.add_Speed, "攻擊速度");
+        AddStat(item.add_Attack, "攻擊力");
 
         //調整補助道具顯示顏色(紅色) 20190221
         ItemStatText.color = Color.red;
