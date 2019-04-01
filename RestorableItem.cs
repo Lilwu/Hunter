@@ -6,6 +6,7 @@ public enum RestoreItemType
 {
     Potion,
     Scroll,
+    Stone
 }
 
 [CreateAssetMenu]
@@ -13,7 +14,8 @@ public class RestorableItem : Item
 {
     public int add_HP;       //回復血量
     public int add_MP;       //回復魔力
-    public int add_Speed;    //增加速度
+    public int add_Attack;    //增加攻擊力
+    public int add_Grind;   //恢復磨損度
     [Space]
     public bool BackToTown;   //傳送回村莊
 
@@ -48,6 +50,17 @@ public class RestorableItem : Item
             Instantiate(restoreFX_red).transform.localPosition = GameObject.Find("Character").transform.position;
 
             FindObjectOfType<PlayerMagic>().AddMp(add_MP);
+        }
+
+        else if(add_Attack != 0)
+        {
+            Debug.Log("增加玩家:" + add_Attack + "的攻擊力");
+            restoreSound = GameObject.Find("Character").GetComponent<PlayerController>().restoreSound;
+            GameObject.Find("Character").GetComponent<AudioSource>().PlayOneShot(restoreSound);
+            GameObject restoreFX_green = Resources.Load("RestoreFX_Green") as GameObject;
+            Instantiate(restoreFX_green).transform.localPosition = GameObject.Find("Character").transform.position;
+
+            FindObjectOfType<Player>().AddWeaponAttack(add_Attack);
         }
     }
 
