@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     public Transform target;
+    public GameObject[] npcHUD;
 
     [Range(0.01f , 1.0f)]
     public float smoothFactor = 0.5f;
@@ -14,9 +15,26 @@ public class CameraFollow : MonoBehaviour
     private float RotateSpeed = 5.0f;
     private Vector3 _cameraOffset;
 
+    //Camera 滾輪控制距離 20190410
+    public float distence; //當前攝影機與主角的距離
+    public float disSpeed = 1;
+    public float minDistence = 1;
+    public float maxDistence = 5;
+    private Vector3 cameraPosition;
+
     private void Start()
     {
         _cameraOffset = transform.position - target.position;
+    }
+
+    private void Update()
+    {
+        //血條追隨攝影機
+        for (int i = 0; i < npcHUD.Length; i++)
+        {
+            npcHUD[i].transform.LookAt(npcHUD[i].transform.position + transform.rotation * Vector3.back,
+                                        transform.rotation * Vector3.up);
+        }
     }
 
     private void LateUpdate()
@@ -26,11 +44,16 @@ public class CameraFollow : MonoBehaviour
             Quaternion camTurnAngle =
                 Quaternion.AngleAxis(Input.GetAxis("Mouse X") * RotateSpeed, Vector3.up);
 
-            _cameraOffset = camTurnAngle * _cameraOffset;
+            _cameraOffset = camTurnAngle * _cameraOffset ;
 
         }
         Vector3 newPos = target.position + _cameraOffset;
-        transform.position = Vector3.Slerp(transform.position, newPos, smoothFactor);
+        transform.position = Vector3.Slerp(transform.position + cameraPosition, newPos, smoothFactor);
         transform.LookAt(target);
+
+        //Camera 滾輪控制距離 20190410
+        distence -= Input.GetAxis("Mouse ScrollWheel") * disSpeed * Time.deltaTime;
+        distence = Mathf.Clamp(distence, minDistence, maxDistence);
+        cameraPosition = new Vector3(0, 0, -distence);
     }
 }
