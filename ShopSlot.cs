@@ -12,7 +12,6 @@ public class ShopSlot : MonoBehaviour
     public Inventory inventory;
 
     private ShopPaneal shopPaneal;
-    private Player _player;
     private Image _image;
     private int _itemamount;
     private int _itemprice;
@@ -21,7 +20,6 @@ public class ShopSlot : MonoBehaviour
     private void Start()
     {
         shopPaneal = GetComponentInParent<ShopPaneal>();
-        _player = GameObject.Find("Character").GetComponent<Player>();
         _image = GetComponent<Image>();
         _itemamount = 0;
         _itemprice = item.Price;
