@@ -29,7 +29,7 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
-        //血條追隨攝影機
+        //NPC_HUD追隨攝影機
         for (int i = 0; i < npcHUD.Length; i++)
         {
             npcHUD[i].transform.LookAt(npcHUD[i].transform.position + transform.rotation * Vector3.back,
