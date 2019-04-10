@@ -7,6 +7,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public Image playerHealth;
     public Text healthText;
+    public ParticleSystem hitEffect;
     private float maxHealth;
     private int currentHealth;
     private AudioSource _audiosource;
@@ -64,9 +65,7 @@ public class PlayerHealth : MonoBehaviour
         print("你被扣了" + damage + "滴血");
         print("目前血量為：" + currentHealth);
 
-        //被攻擊特效 20190318
-        GameObject hitEffect = Resources.Load("hitEffect") as GameObject;
-        Instantiate(hitEffect).transform.localPosition = transform.GetChild(0).transform.position;
+        hitEffect.Play();
 
         if (currentHealth <= 0)
         {
@@ -83,7 +82,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.M))
+        if(Input.GetKeyDown(KeyCode.N))
         {
             currentHealth -= 50;
             playerHealth.fillAmount = currentHealth / maxHealth;
