@@ -61,6 +61,11 @@ public class PlayerController : MonoBehaviour
     private bool hit_item = false;
     private bool hit_enemy = false;
 
+    //任務事件 20190405
+    private MissionManager missionManager;
+    public delegate void MissionItemAction();
+    public static event MissionItemAction MissionItemActionEvent;
+
 
     private void Awake()
     {
@@ -70,6 +75,7 @@ public class PlayerController : MonoBehaviour
         inventoryInput = FindObjectOfType<InventoryInput>();
         inventory = FindObjectOfType<Inventory>();
         nav = GetComponent<NavMeshAgent>();
+        missionManager = FindObjectOfType<MissionManager>();
     }
 
     private void Start()
@@ -292,6 +298,17 @@ public class PlayerController : MonoBehaviour
         {
             mItemToPickup.OnPickUp();
             mItemToPickup.PickupItem(mItemToPickup);
+
+            print("test01" + mItemToPickup.setting.ItemName);
+
+            if (missionManager.ISCOLLECTIONMISSION == true && missionManager.MISSIONITEMNAME == mItemToPickup.setting.ItemName)
+            {
+                Debug.Log("目前進行任務中" + mItemToPickup.setting.ItemName);
+                if (MissionItemActionEvent != null)
+                {
+                    MissionItemActionEvent();
+                }
+            }
         }
 
         if(mMoneyToPickup != null)
