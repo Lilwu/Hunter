@@ -65,6 +65,21 @@ public class ItemTooltip : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    //任務道具顯示 20190406
+    public void ShowTooltip(MissionItem item)
+    {
+        ItemNameText.text = item.ItemName;
+        ItemSlotText.text = item.missionType.ToString();
+
+        sb.Length = 0;
+
+        //調整補助道具顯示顏色(紅色) 20190324
+        ItemStatText.color = Color.red;
+        ItemStatText.text = sb.ToString();
+
+        gameObject.SetActive(true);
+    }
+
     public void HideTooltip()
     {
         gameObject.SetActive(false);
