@@ -31,10 +31,16 @@ public class MonsterHealth : MonoBehaviour
     static int takeDamged = Animator.StringToHash("Base Layer.block_hit");
     public AnimatorStateInfo BS;
 
+    //任務事件
+    private MissionManager missionManager;
+    public delegate void MissionAction();
+    public static event MissionAction MissionActionEvent;
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         m_audioSource = GetComponent<AudioSource>();
+        missionManager = FindObjectOfType<MissionManager>();
     }
 
     private void Start()
@@ -88,6 +94,15 @@ public class MonsterHealth : MonoBehaviour
         GetComponent<AudioSource>().clip = null;
         GetComponent<Monster>().FallMoney(this.transform);
         GetComponent<Monster>().GetExp();
+
+        if(missionManager.ISDESTROYMISSION == true && missionManager.MISSIONMOSNAME == _name)
+        {
+            Debug.Log("目前進行任務中" + _name);
+            if(MissionActionEvent != null)
+            {
+                MissionActionEvent();
+            }
+        }
     }
 
     public void StartSinking()
