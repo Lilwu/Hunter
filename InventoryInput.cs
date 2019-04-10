@@ -27,6 +27,7 @@ public class InventoryInput : MonoBehaviour
     [SerializeField] KeyCode[] toggleSettingKeys;
 
     public AudioClip clickClip;
+    public AudioClip awardClip;
     private AudioSource audioSource;
 
     private void OnValidate()
