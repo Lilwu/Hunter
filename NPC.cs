@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum NPC_Type
+{
+    Shop,
+    Mission,
+}
+
 public class NPC : MonoBehaviour
 {
     public string _npcName;
@@ -18,6 +24,9 @@ public class NPC : MonoBehaviour
     private Animator animator;
     private bool isRange;
 
+    public NPC_Type npc_Type;
+    public GameObject questMark;
+    public GameObject exclamationMark;
 
     private void Awake()
     {
@@ -51,7 +60,7 @@ public class NPC : MonoBehaviour
             NpcMessage.enabled = false;
             isRange = false;
             shopPanel.SetActive(false);
-            animator.SetBool("isShop", false);
+            animator.SetBool("IsQuest", false);
         }
     }
 
@@ -62,7 +71,7 @@ public class NPC : MonoBehaviour
             NpcMessage.text = _npcStartMessage;
             FindObjectOfType<InventoryInput>().CliclSound();
             shopPanel.SetActive(true);
-            animator.SetBool("isShop", true);
+            animator.SetBool("IsQuest", true);
         }
     }
 
