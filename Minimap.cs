@@ -20,7 +20,5 @@ public class Minimap : MonoBehaviour
             icons[i].transform.LookAt(icons[i].transform.position + transform.rotation * Vector3.back,
                                         transform.rotation * Vector3.up);
         }
-
-
     }
 }
