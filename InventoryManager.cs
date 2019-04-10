@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-
 public class InventoryManager : MonoBehaviour
 {
     public ItemTooltip itemTooltip;
@@ -144,6 +143,14 @@ public class InventoryManager : MonoBehaviour
         {
             itemTooltip.transform.position = Input.mousePosition;
             itemTooltip.ShowTooltip(magicalcardItem);
+        }
+
+        //新增任務道具顯示功能 20190407
+        MissionItem missionItem = itemSlot.Item as MissionItem;
+        if(missionItem != null)
+        {
+            itemTooltip.transform.position = Input.mousePosition;
+            itemTooltip.ShowTooltip(missionItem);
         }
     }
 
@@ -409,5 +416,6 @@ public class InventoryManager : MonoBehaviour
                 warningPanel.SetActive(false);
             }
         }
+
     }
 }
