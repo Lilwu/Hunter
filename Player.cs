@@ -17,8 +17,11 @@ public class Player : MonoBehaviour
     public Text moneyText;
     static Player instance;
 
-    //LevelUp
+    //LevelUp 20190410
     public Text levelText;
+    public ParticleSystem levelupEffect;
+    public ParticleSystem playerLeveupFx;
+    private InventoryInput inventoryInput;
 
     private void Awake()
     {
@@ -32,7 +35,7 @@ public class Player : MonoBehaviour
 
             _maxMp = 499;
             _mp = _maxMp;
-            _money = 1;
+            _money = 300;
             _attack = 20;
 
             _lv = 1;
@@ -50,11 +53,18 @@ public class Player : MonoBehaviour
     {
         moneyText.text = _money.ToString();
         levelText.text = _lv.ToString();
+        inventoryInput = FindObjectOfType<InventoryInput>();
     }
 
     public void AddMoney(int money)
     {
         _money += money;
+        moneyText.text = _money.ToString();
+    }
+
+    public void LessMoney(int money)
+    {
+        _money -= money;
         moneyText.text = _money.ToString();
     }
 
@@ -113,18 +123,33 @@ public class Player : MonoBehaviour
 
     private void LevelUP()
     {
-        GameObject levelupFx = Resources.Load("LevelUp_Fx") as GameObject;
-        if (_exp >= 30 && _exp < 80)
+
+        if (_exp >= 30 && _exp < 80 && _lv != 2)
+        {
             _lv = 2;
-        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
-        if (_exp >= 80 && _exp < 150)
+            LevelUpEffect();
+        }
+        else if (_exp >= 80 && _exp < 150 && _lv != 3)
+        {
             _lv = 3;
-        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
-        if (_exp >= 150 && _exp < 250)
+            LevelUpEffect();
+        }
+        else if (_exp >= 150 && _exp < 250 && _lv != 4)
+        {
             _lv = 4;
-        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
-        if (_lv >= 250)
+            LevelUpEffect();
+        }
+        else if (_lv >= 250 && _lv != 5)
+        {
             _lv = 5;
-        Instantiate(levelupFx).transform.localPosition = GameObject.Find("Character").transform.position;
+            LevelUpEffect();
+        }
+    }
+
+    private void LevelUpEffect()
+    {
+        playerLeveupFx.Play();
+        levelupEffect.Play();
+        inventoryInput.GetComponent<AudioSource>().PlayOneShot(inventoryInput.awardClip);
     }
 }
