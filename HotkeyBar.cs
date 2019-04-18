@@ -40,7 +40,6 @@ public class HotkeyBar : MonoBehaviour
         for (int i = 0; i < hotkeySlots.Length; i++)
         {
             hotkeySlots[i].Item = item.Item;
-            print("test3-3");
         }
     }
 
