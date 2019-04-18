@@ -33,7 +33,8 @@ public class PlayerHealth : MonoBehaviour
     {
         if(currentHealth >= maxHealth)
         {
-            print("沒發生任何事");
+            FindObjectOfType<StatePanel>().SetSateText("沒發生任何事"); //顯示StatePanel
+
             return;
         }
         else if(currentHealth >= maxHealth -amount && currentHealth <= maxHealth)
@@ -42,7 +43,7 @@ public class PlayerHealth : MonoBehaviour
             playerHealth.fillAmount = currentHealth / maxHealth;
             healthText.text = currentHealth + "/" + maxHealth;
 
-            print("你的血量已經恢復滿了");
+            FindObjectOfType<StatePanel>().SetSateText("您的血量已經恢復滿了"); //顯示StatePanel
         }
         else
         {
@@ -50,7 +51,7 @@ public class PlayerHealth : MonoBehaviour
             playerHealth.fillAmount = currentHealth / maxHealth;
             healthText.text = currentHealth + "/" + maxHealth;
 
-            print("你增加了" + amount + "滴血");
+            FindObjectOfType<StatePanel>().SetSateText("您增加了" + amount + "滴血"); //顯示StatePanel
         }
     }
 
@@ -62,8 +63,7 @@ public class PlayerHealth : MonoBehaviour
         playerHealth.fillAmount = currentHealth / maxHealth;
         healthText.text = currentHealth + "/" + maxHealth;
 
-        print("你被扣了" + damage + "滴血");
-        print("目前血量為：" + currentHealth);
+        FindObjectOfType<StatePanel>().SetSateText("您被扣了" + damage + "滴血"); //顯示StatePanel
 
         hitEffect.Play();
 
@@ -76,17 +76,7 @@ public class PlayerHealth : MonoBehaviour
     void Death()
     {
         healthText.text = 0 + "/" + maxHealth;
-        print("你已經死亡！");
-        print("目前血量為：" + currentHealth);
-    }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.N))
-        {
-            currentHealth -= 50;
-            playerHealth.fillAmount = currentHealth / maxHealth;
-            healthText.text = currentHealth + "/" + maxHealth;
-        }
+        FindObjectOfType<StatePanel>().SetSateText("您已經死亡！"); //顯示StatePanel
     }
 }
