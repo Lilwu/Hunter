@@ -14,8 +14,10 @@ public class Player : MonoBehaviour
     static int _lv;
     static int _exp;
 
+    public GameObject playerUI;
     public Text moneyText;
     static Player instance;
+    static GameObject instanceUI;
 
     //LevelUp 20190410
     public Text levelText;
@@ -29,6 +31,9 @@ public class Player : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(this);
+
+            instanceUI = playerUI;
+            DontDestroyOnLoad(playerUI);
 
             _maxHp = 999;
             _hp = _maxHp;
@@ -45,7 +50,9 @@ public class Player : MonoBehaviour
         {
             string sceneName = SceneManager.GetActiveScene().name;
             print("刪除" + sceneName + "的" + name);
+            transform.position = GameObject.Find("BornPoint").transform.position;
             Destroy(gameObject);
+            Destroy(playerUI);
         }
     }
 
@@ -151,5 +158,6 @@ public class Player : MonoBehaviour
         playerLeveupFx.Play();
         levelupEffect.Play();
         inventoryInput.GetComponent<AudioSource>().PlayOneShot(inventoryInput.awardClip);
+        FindObjectOfType<StatePanel>().SetSateText("<color=green>" + "恭喜！等級提升為： " + "</color>" + "<color=green>" + _lv + "</color>"); //顯示StatePanel
     }
 }
