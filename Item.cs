@@ -12,6 +12,7 @@ public class Item : ScriptableObject
     public string ItemName;
     public Sprite Icon;
     public int Price;
+    public bool UseByRightClick;
 
     //20190224 
     [Range(1,999)]
