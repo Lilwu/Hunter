@@ -50,12 +50,9 @@ public class MissionManager : MonoBehaviour
     {
         if (missionAmount >= mission.missionContentAmount)
         {
-            //isDestroyMission = false;
             inprogressText.gameObject.SetActive(false);
             finishedText.gameObject.SetActive(true);
             mission.IsFinished();
-            missionPanel.GetComponent<MissionPanel>().ResetMissionPanel();
-            missionPanel.GetComponent<MissionPanel>().ResetMissionCondition();
             awardEffect.Play();
             inventoryInput.GetComponent<AudioSource>().PlayOneShot(inventoryInput.awardClip);
         }
@@ -65,12 +62,9 @@ public class MissionManager : MonoBehaviour
     {
         if (missionAmount >= mission.missionContentAmount)
         {
-            //isCollectionMission = false;
             inprogressText.gameObject.SetActive(false);
             finishedText.gameObject.SetActive(true);
             mission.IsFinished();
-            missionPanel.GetComponent<MissionPanel>().ResetMissionPanel();
-            missionPanel.GetComponent<MissionPanel>().ResetMissionCondition();
             awardEffect.Play();
             inventoryInput.GetComponent<AudioSource>().PlayOneShot(inventoryInput.awardClip);
         }
@@ -119,7 +113,8 @@ public class MissionManager : MonoBehaviour
                 isCollectionMission = true;
                 missionItemName = mission.missionItemName.ItemName;
             }
-            gameObject.SetActive(true);
+
+            missionMsgPanel.SetActive(true);
         }
         else
         {
@@ -158,4 +153,8 @@ public class MissionManager : MonoBehaviour
         get { return missionItemName; }
     }
 
+    public Mission ISMISSION
+    {
+        get { return mission; }
+    }
 }
