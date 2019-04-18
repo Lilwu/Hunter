@@ -24,16 +24,19 @@ public class PlayerController : MonoBehaviour
     private bool WeaponInHand; //判斷武器是否在手上
     public GameObject Hand;
 
-
     private AudioSource _audioSource;
     public AudioClip attackVoiceClip;
     public AudioClip pickupSoundClip;
     public AudioClip hurtVoiceClip;
     public AudioClip restoreSound;
     public AudioClip fireDanceClip;
+    public AudioClip rightWalkClip;
+    public AudioClip leftWalkClip;
     private AudioClip itemAudio;
 
     //MOVEMENT
+    public ParticleSystem righWalkFX;
+    public ParticleSystem leftWalkFX;
     private float Speed = 5.0f;
     private float RotationSpeed = 240.0f;
     private float Gravity = 20.0f;
@@ -43,7 +46,7 @@ public class PlayerController : MonoBehaviour
     private bool moneyInRange;
     private bool npcInRange;
 
-    //Clicl TO Move  20190328
+    //Click TO Move  20190328
     private NavMeshAgent nav;
     private bool _playerRunning = false;
 
@@ -85,6 +88,8 @@ public class PlayerController : MonoBehaviour
         actionSwitch = false;
         WeaponInHand = false;
         mosInRange = false;
+        _anim.SetBool("IsStart", true);
+        _audioSource.PlayOneShot(restoreSound);
     }
 
     private void WeaponInHandAction()
@@ -110,7 +115,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!actionSwitch)
         {
-            //Movement TODO:Run
+            //Movement
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
 
@@ -123,11 +128,25 @@ public class PlayerController : MonoBehaviour
                 _moveDir = Vector3.forward * v;
                 _moveDir = transform.TransformDirection(_moveDir);
                 _moveDir *= Speed;
+
+                //Movement: RUN  20190413
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    _anim.SetBool("IsRun", true);
+                    Speed = 7.5f;
+
+                }
+                else if(Input.GetKeyUp(KeyCode.LeftShift))
+                {
+                    Speed = 5.0f;
+                    _anim.SetBool("IsRun", false);
+                }
             }
         }
 
         _moveDir.y -= Gravity * Time.deltaTime;
         _characterController.Move(_moveDir * Time.deltaTime);
+
 
         //Attack
         Bs = _anim.GetCurrentAnimatorStateInfo(0);
@@ -142,8 +161,9 @@ public class PlayerController : MonoBehaviour
             _anim.SetBool("IsAttack" , false);
             _anim.SetBool("IsPickup", false);
             _anim.SetBool("GetHit", false);
+            StopWalkFX();
 
-            if(Bs.fullPathHash == skill01ID)
+            if (Bs.fullPathHash == skill01ID)
             {
                 _anim.SetBool("Skill01", false);
                 AttackOverPositsion(1);
@@ -188,7 +208,11 @@ public class PlayerController : MonoBehaviour
             {
                 _anim.SetBool("IsAttack", true);
 
-                transform.LookAt(hitPosition, Vector3.up);
+                //攻擊轉向(保持Y軸) 20190415
+                Vector3 lookPos = hitPosition - transform.position;
+                lookPos.y = 0;
+                Quaternion rootation = Quaternion.LookRotation(lookPos);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rootation, Time.deltaTime * RotationSpeed);
             }
         }
 
@@ -247,7 +271,7 @@ public class PlayerController : MonoBehaviour
 
         if(GameObject.Find("MagicEffect").transform.FindChild(effect + "(Clone)") == null)
         {
-            Instantiate(Magicaleffect, GameObject.Find("MagicEffect").transform).transform.localPosition = transform.position;
+            Instantiate(Magicaleffect, GameObject.Find("MagicEffect").transform).transform.localPosition = GameObject.Find("MagicEffect").transform.localPosition;
         }
         else
         {
@@ -278,7 +302,7 @@ public class PlayerController : MonoBehaviour
                 FindObjectOfType<GenerateFont>().AttackPointFont(r_attack);
                 FindObjectOfType<DamageFont>().playerAttackPoint = r_attack;
 
-                print(r_attack);
+                Debug.Log(r_attack);
             }
         }
     }
@@ -299,11 +323,10 @@ public class PlayerController : MonoBehaviour
             mItemToPickup.OnPickUp();
             mItemToPickup.PickupItem(mItemToPickup);
 
-            print("test01" + mItemToPickup.setting.ItemName);
-
             if (missionManager.ISCOLLECTIONMISSION == true && missionManager.MISSIONITEMNAME == mItemToPickup.setting.ItemName)
             {
-                Debug.Log("目前進行任務中" + mItemToPickup.setting.ItemName);
+                FindObjectOfType<StatePanel>().SetSateText("取得任務道具" + mItemToPickup.setting.ItemName); //顯示StatePanel
+
                 if (MissionItemActionEvent != null)
                 {
                     MissionItemActionEvent();
@@ -338,9 +361,6 @@ public class PlayerController : MonoBehaviour
         ItemBase item = other.GetComponent<ItemBase>();
         if (item != null && other.tag == "Item")
         {
-            //if (mLockPickup)
-            // return;
-
             mItemToPickup = item;
             inventoryInput.OpenMessagePanel("");
         }
@@ -385,5 +405,22 @@ public class PlayerController : MonoBehaviour
             npcInRange = false;
             mNpcToShoping = null;
         }
+    }
+
+    public void RightWalkSound()
+    {
+        _audioSource.PlayOneShot(rightWalkClip , 0.3f);
+        righWalkFX.Play();
+    }
+    public void LeftWalkSound()
+    {
+        _audioSource.PlayOneShot(leftWalkClip , 0.3f);
+        leftWalkFX.Play();
+    }
+
+    public void StopWalkFX()
+    {
+        righWalkFX.Stop();
+        leftWalkFX.Stop();
     }
 }
