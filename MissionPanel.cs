@@ -14,6 +14,7 @@ public class MissionPanel : MonoBehaviour
     {
         ResetMissionPanel();
         ResetMissionCondition();
+        GetComponentInParent<Canvas>().worldCamera = GameObject.Find("UICamera").GetComponent<Camera>();
     }
 
     private void OnValidate()
