@@ -6,11 +6,11 @@ using UnityEngine.UI;
 public class MissionSlot : MonoBehaviour
 {
     public Mission mission;
+
     public MissionManager missionManager;
     public Inventory inventory;
-    public GameObject warningPanel;
+
     public ParticleSystem awardEffect;
-    private Text warningText;
     private Player _player;
     private Color normalColor = Color.white;
     private Color nonenoughColor = Color.red;
@@ -24,22 +24,22 @@ public class MissionSlot : MonoBehaviour
     [SerializeField] Image _missionButton;
 
     [Space]
-    [SerializeField] Sprite btn_Accept;
-    [SerializeField] Sprite btn_Finished;
-    [SerializeField] Sprite btn_Inprogress;
-    [SerializeField] Sprite btn_Insufficient;
-    [SerializeField] Sprite btn_Receive;
+    [SerializeField] protected Sprite btn_Accept;
+    [SerializeField] protected Sprite btn_Finished;
+    [SerializeField] protected Sprite btn_Inprogress;
+    [SerializeField] protected Sprite btn_Insufficient;
+    [SerializeField] protected Sprite btn_Receive;
 
     //任務事件 20190403
     private void IsFinishedMission()
     {
-        print("test04");
         CheckMissionCondition();
     }
 
     private void Awake()
     {
-        warningText = warningPanel.GetComponentInChildren<Text>();
+        missionManager = FindObjectOfType<MissionManager>();
+        inventory = FindObjectOfType<Inventory>();
     }
 
     private void Start()
@@ -63,7 +63,7 @@ public class MissionSlot : MonoBehaviour
             _missionButton.sprite = btn_Insufficient;
             _missionButton.GetComponent<Button>().enabled = false;
         }
-        else if(_player.LV >= mission.missionLevel && mission.ISFINISHED == false && missionManager.ISCOLLECTIONMISSION == false && missionManager.ISDESTROYMISSION == false)
+        else if(_player.LV >= mission.missionLevel && mission.ISFINISHED == false && missionManager.ISCOLLECTIONMISSION == false && missionManager.ISDESTROYMISSION == false && missionManager.ISMISSION == false)
         {
             _missionCondition.color = normalColor;
             _missionButton.sprite = btn_Accept;
@@ -75,6 +75,10 @@ public class MissionSlot : MonoBehaviour
             _missionButton.sprite = btn_Receive;
             exclamationMarkOpen.SetActive(true);
         }
+        else if(missionManager.ISMISSION == mission)
+        {
+            _missionButton.sprite = btn_Inprogress;
+        }
     }
 
     public void ReceiveAwards()
@@ -84,7 +88,8 @@ public class MissionSlot : MonoBehaviour
             if(mission._missionAwardMoney != 0)
             {
                 _player.AddMoney(mission._missionAwardMoney);
-                print("您得到了" + mission._missionAwardMoney + "個金幣");
+                //顯示StatePanel
+                FindObjectOfType<StatePanel>().SetSateText("您得到了" + mission._missionAwardMoney + "個金幣");
             }
 
             if(mission._missionAwardsList != null)
@@ -97,7 +102,8 @@ public class MissionSlot : MonoBehaviour
                 for (int i = 0; i < mission._missionAwardsList.Count; i++)
                 {
                     inventory.AddItem(mission._missionAwardsList[i]);
-                    print("您得到了" + mission._missionAwardsList[i]);
+                    //顯示StatePanel
+                    FindObjectOfType<StatePanel>().SetSateText("您得到了" + mission._missionAwardsList[i]);
                 }
             }
             exclamationMarkOpen.SetActive(false);
@@ -111,7 +117,8 @@ public class MissionSlot : MonoBehaviour
         }
         else if(_missionButton.sprite == btn_Accept && missionManager.ISCOLLECTIONMISSION == false && missionManager.ISDESTROYMISSION == false)
         {
-            print("您接受了任務：" + mission.missionName);
+            FindObjectOfType<StatePanel>().SetSateText("<color=yellow>" + "您接受了任務：" + "</color>" + "<color=yellow>" + mission.missionName + "</color>"); //顯示StatePanel
+
             missionManager.AcceptMission(mission);
 
             _missionButton.sprite = btn_Inprogress;
@@ -120,14 +127,12 @@ public class MissionSlot : MonoBehaviour
 
         else if(missionManager.ISCOLLECTIONMISSION == true || missionManager.ISDESTROYMISSION == true)
         {
-            print("目前正在執行其他任務！");
-            warningText.text = "- " + "目前正在執行其他任務" + " -";
-            warningPanel.SetActive(true);
+            FindObjectOfType<StatePanel>().SetSateText("<color=red>" + "目前正在執行其他任務！" +"</color>"); //顯示StatePanel
         }
 
         else if (_missionButton.sprite == btn_Finished)
         {
-            print("您已完成此任務了！");
+            FindObjectOfType<StatePanel>().SetSateText("您已完成此任務了！"); //顯示StatePanel
         }
     }
 
