@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum MissionItemType
 {
-    monsterItem
+    任務道具,
 }
 
 [CreateAssetMenu]
@@ -12,7 +12,6 @@ public class MissionItem : Item
 {
     public string itemDescription;
     public MissionType missionType;
-
 
     public override Item GetCopy()
     {
