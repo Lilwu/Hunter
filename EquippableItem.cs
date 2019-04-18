@@ -4,14 +4,14 @@ using UnityEngine;
 
 public enum EquipmentType
 {
-    Helmet,
-    Chest,
-    Gloves,
-    Boots,
-    Weapon,
-    Shield,
-    Accessory1,
-    Accessory2,
+    頭盔,
+    盔甲,
+    手套,
+    靴子,
+    武器,
+    盾牌,
+    戒指,
+    項鍊,
 }
 
 [CreateAssetMenu]
@@ -51,8 +51,6 @@ public class EquippableItem : Item
     {
 
     }
-
-
 }
 
 
