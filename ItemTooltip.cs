@@ -22,6 +22,7 @@ public class ItemTooltip : MonoBehaviour
         AddStat(item.Damge, "攻擊力");
         AddStat(item.Defense, "防禦力");
         AddStat(item.weight, "重量");
+        AddStateBool(item.UseByRightClick, "<color=grey>" + "點擊右鍵即可裝備" + "</color>");
 
         //調整裝備顯示顏色(綠色)
         ItemStatText.color = Color.green;
@@ -40,9 +41,11 @@ public class ItemTooltip : MonoBehaviour
         AddStat(item.add_HP, "玩家體力");
         AddStat(item.add_MP, "玩家魔力");
         AddStat(item.add_Attack, "攻擊力");
+        AddStateBool(item.BackToTown, "<color=white>" + "使用後傳送回村莊" + "</color>");
+        AddStateBool(item.UseByRightClick, "<color=grey>" + "點擊右鍵即可使用" + "</color>");
 
-        //調整補助道具顯示顏色(紅色) 20190221
-        ItemStatText.color = Color.red;
+        //調整補助道具顯示顏色
+        ItemStatText.color = Color.green;
         ItemStatText.text = sb.ToString();
 
         gameObject.SetActive(true);
@@ -56,10 +59,11 @@ public class ItemTooltip : MonoBehaviour
 
         sb.Length = 0;
         AddStat(item.damage, "魔法攻擊力");
-        AddStat(item.coldtime, "冷卻時間");
+        AddColdtime(item.coldtime, "<color=white>" + "冷卻時間" + "</color>");
+        AddStateBool(item.UseByRightClick, "<color=grey>" + "移至熱鍵即可使用" + "</color>");
 
-        //調整補助道具顯示顏色(紅色) 20190324
-        ItemStatText.color = Color.red;
+        //調整補助道具顯示顏色
+        ItemStatText.color = Color.green;
         ItemStatText.text = sb.ToString();
 
         gameObject.SetActive(true);
@@ -72,9 +76,10 @@ public class ItemTooltip : MonoBehaviour
         ItemSlotText.text = item.missionType.ToString();
 
         sb.Length = 0;
+        AddDescription(item.itemDescription);
 
-        //調整補助道具顯示顏色(紅色) 20190324
-        ItemStatText.color = Color.red;
+        //調整補助道具顯示顏色
+        ItemStatText.color = Color.white;
         ItemStatText.text = sb.ToString();
 
         gameObject.SetActive(true);
@@ -93,13 +98,44 @@ public class ItemTooltip : MonoBehaviour
             if (sb.Length > 0)
                 sb.AppendLine();
 
+            sb.Append(statName);
+            sb.Append(" ");
 
             if (value > 0)
                 sb.Append("+");
             sb.Append(value);
-            sb.Append(" ");
+        }
+    }
+
+    private void AddStateBool(bool value , string statName)
+    {
+        if (value != false)
+        {
+            if (sb.Length > 0)
+                sb.AppendLine();
+                
             sb.Append(statName);
         }
+    }
 
+    private void AddColdtime(float value , string statName)
+    {
+        if (value != 0)
+        {
+            if (sb.Length > 0)
+                sb.AppendLine();
+
+            sb.Append(statName);
+            sb.Append(" ");
+
+            if (value > 0)
+            sb.Append("<color=white>" + value + "</color>");
+            sb.Append("<color=white>" + "秒" + "</color>");
+        }
+    }
+
+    private void AddDescription(string statText)
+    {
+        sb.Append(statText);
     }
 }
