@@ -63,7 +63,8 @@ public class MonsterController : MonoBehaviour
 
         if (other.tag == "TrackRange")
         {
-            print("你被發現了！");
+            FindObjectOfType<StatePanel>().SetSateText("被敵人發現了！"); //顯示StatePanel
+
             playerInRange = true;
             _audiosource.Play();
         }
@@ -96,6 +97,5 @@ public class MonsterController : MonoBehaviour
         }
 
         dis = Vector3.Distance(player.position, transform.position);
-        //print(dis);
     }
 }
