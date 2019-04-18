@@ -23,7 +23,7 @@ public class Inventory : MonoBehaviour
 
 
     //滑鼠游標移動物品 20190221
-    private void Awake()
+    private void Start()
     {
         for (int i = 0; i < itemSlots.Count; i++)
         {
