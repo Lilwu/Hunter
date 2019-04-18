@@ -45,7 +45,7 @@ public class InventoryInput : MonoBehaviour
         equipmentPanelGameObject.SetActive(false);
         inventoryPanelGameObject.SetActive(false);
         settingPanelGameObject.SetActive(false);
-        minimap.orthographicSize = 5.0f;
+        minimap.orthographicSize = 20.0f;
     }
 
     void Update()
@@ -156,7 +156,7 @@ public class InventoryInput : MonoBehaviour
     //小地圖
     public void PlusMinimap()
     {
-        if (minimap.orthographicSize <= 8 && minimap.orthographicSize > 3)
+        if (minimap.orthographicSize <= 20 && minimap.orthographicSize > 15)
         {
             CliclSound();
             minimap.orthographicSize--;
@@ -164,7 +164,7 @@ public class InventoryInput : MonoBehaviour
     }
     public void MinusMinimap()
     {
-        if (minimap.orthographicSize >= 3 && minimap.orthographicSize < 8)
+        if (minimap.orthographicSize >= 20 && minimap.orthographicSize < 30)
         {
             CliclSound();
             minimap.orthographicSize++;
