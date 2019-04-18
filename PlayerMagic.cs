@@ -32,7 +32,8 @@ public class PlayerMagic : MonoBehaviour
     {
         if (currentMagic >= maxMagic)
         {
-            print("沒發生任何事");
+            FindObjectOfType<StatePanel>().SetSateText("沒發生任何事"); //顯示StatePanel
+
             return;
         }
         else if (currentMagic >= maxMagic - amount && currentMagic <= maxMagic)
@@ -41,7 +42,7 @@ public class PlayerMagic : MonoBehaviour
             playerMagic.fillAmount = currentMagic / maxMagic;
             magicText.text = currentMagic + "/" + maxMagic;
 
-            print("你的魔力已經恢復滿了");
+            FindObjectOfType<StatePanel>().SetSateText("您的魔力已經恢復滿了"); //顯示StatePanel
         }
         else
         {
@@ -49,24 +50,21 @@ public class PlayerMagic : MonoBehaviour
             playerMagic.fillAmount = currentMagic / maxMagic;
             magicText.text = currentMagic + "/" + maxMagic;
 
-            print("你增加了" + amount + "滴魔");
+            FindObjectOfType<StatePanel>().SetSateText("您增加了" + amount + "滴魔力"); //顯示StatePanel
         }
     }
 
     public void UseMagic(int consume)
     {
-        _animator.SetBool("GetHit", true);
-        _audiosource.PlayOneShot(GetComponent<PlayerController>().hurtVoiceClip);
         currentMagic -= consume;
         playerMagic.fillAmount = currentMagic / maxMagic;
         magicText.text = currentMagic + "/" + maxMagic;
 
-        print("你消耗了" + consume + "滴魔");
-        print("目前魔力為：" + currentMagic);
+        FindObjectOfType<StatePanel>().SetSateText("您消耗了" + consume + "滴魔力"); //顯示StatePanel
 
         if (currentMagic <= 0)
         {
-            print("你已經沒有魔力了！");
+            FindObjectOfType<StatePanel>().SetSateText("您已經沒有魔力了"); //顯示StatePanel
         }
     }
 
