@@ -5,7 +5,7 @@ using UnityEngine;
 public class Minimap : MonoBehaviour
 {
     public Transform player;
-    public List<Transform> icons;
+    public GameObject[] icons;
 
     private void LateUpdate()
     {
@@ -15,10 +15,27 @@ public class Minimap : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(90f, player.eulerAngles.y, 0f);
 
-        for (int i = 0; i < icons.Count; i++)
+
+        if(icons != null)
         {
-            icons[i].transform.LookAt(icons[i].transform.position + transform.rotation * Vector3.back,
-                                        transform.rotation * Vector3.up);
+            for (int i = 0; i < icons.Length; i++)
+            {
+                if(icons[i].gameObject != null)
+                {
+                    icons[i].transform.LookAt(icons[i].transform.position + transform.rotation * Vector3.back,
+                                            transform.rotation * Vector3.up);
+                }
+                else if(icons[i].gameObject == null)
+                {
+                    return;
+                }
+            }
         }
     }
+
+    public void ResetIconFollow()
+    {
+        icons = GameObject.FindGameObjectsWithTag("MinimapIcon");
+    }
+
 }
