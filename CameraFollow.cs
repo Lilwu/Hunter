@@ -30,10 +30,20 @@ public class CameraFollow : MonoBehaviour
     private void Update()
     {
         //NPC_HUD追隨攝影機
-        for (int i = 0; i < npcHUD.Length; i++)
+        if(npcHUD != null)
         {
-            npcHUD[i].transform.LookAt(npcHUD[i].transform.position + transform.rotation * Vector3.back,
-                                        transform.rotation * Vector3.up);
+            for (int i = 0; i < npcHUD.Length; i++)
+            {
+                if(npcHUD[i].gameObject != null)
+                {
+                    npcHUD[i].transform.LookAt(npcHUD[i].transform.position + transform.rotation * Vector3.back,
+                                            transform.rotation * Vector3.up);
+                }
+                else if(npcHUD[i].gameObject == null)
+                {
+                    return;
+                }
+            }
         }
     }
 
@@ -49,11 +59,16 @@ public class CameraFollow : MonoBehaviour
         }
         Vector3 newPos = target.position + _cameraOffset;
         transform.position = Vector3.Slerp(transform.position + cameraPosition, newPos, smoothFactor);
-        transform.LookAt(target);
+        transform.LookAt(target) ;
 
         //Camera 滾輪控制距離 20190410
         distence -= Input.GetAxis("Mouse ScrollWheel") * disSpeed * Time.deltaTime;
         distence = Mathf.Clamp(distence, minDistence, maxDistence);
         cameraPosition = new Vector3(0, 0, -distence);
+    }
+
+    public void ResetHUDFollow()
+    {
+        npcHUD = GameObject.FindGameObjectsWithTag("UI_NPC");
     }
 }
