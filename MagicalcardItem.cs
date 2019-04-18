@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public enum MagicalcardType
 {
-    Attack,
-    Restore
+    攻擊型魔法,
+    輔助型魔法,
 }
 
 [CreateAssetMenu]
@@ -14,6 +11,7 @@ public class MagicalcardItem : Item
 {
     public int damage;
     public int coldtime;
+    public int takeMagic;
     public string animation;
     public string effectName;
     [Space]
@@ -21,14 +19,14 @@ public class MagicalcardItem : Item
 
     public virtual void Use(InventoryManager inventoryManager)
     {
-        Debug.Log("使用魔法書");
-        Player _player = FindObjectOfType<Player>();
+        FindObjectOfType<StatePanel>().SetSateText("使用魔法書： " + ItemName); //顯示StatePanel
 
+        Player _player = FindObjectOfType<Player>();
         //攻擊型魔法
-        if (magicalcardType == MagicalcardType.Attack)
+        if (magicalcardType == MagicalcardType.攻擊型魔法)
         {
-            Debug.Log("使用了:" + ItemName);
             FindObjectOfType<PlayerController>().UseMagicalCard(animation, effectName);
+            FindObjectOfType<PlayerMagic>().UseMagic(takeMagic);
 
             Collider[] objs = Physics.OverlapSphere(GameObject.Find("Character").transform.position + Vector3.up, 4.0f, 1 << LayerMask.NameToLayer("Enemy"));
 
