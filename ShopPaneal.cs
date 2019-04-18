@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,8 +7,8 @@ using UnityEngine.UI;
 public class ShopPaneal : MonoBehaviour
 {
     public Transform shopslotParent;
-    public Inventory inventory;
     public GameObject shopPanel;
+    public Inventory inventory;
 
     public ShopSlot[] shopSlots;
     public List<Item> items;
@@ -18,6 +19,10 @@ public class ShopPaneal : MonoBehaviour
     private Color normalColor = Color.white;
     private Color nonMoneyColor = Color.red;
 
+    //商品顯示價錢Tooltip 20190417
+    public event Action<ShopSlot> OnPointerEnterEvent;
+    public event Action<ShopSlot> OnPointerExitEvent;
+
     private void OnValidate()
     {
         shopSlots = shopslotParent.GetComponentsInChildren<ShopSlot>();
@@ -25,9 +30,22 @@ public class ShopPaneal : MonoBehaviour
 
     private void Awake()
     {
+        print("shopPanel");
+        ResetShopPanel();
+        inventory = FindObjectOfType<Inventory>();
+    }
+
+    private void Start()
+    {
         _player = GameObject.Find("Character").GetComponent<Player>();
         _npc = GetComponentInParent<NPC>();
-        ResetShopPanel();
+
+        //商品顯示價錢Tooltip 20190417
+        for (int i = 0; i < shopSlots.Length; i++)
+        {
+            shopSlots[i].OnPointerEnterEvent += OnPointerEnterEvent;
+            shopSlots[i].OnPointerExitEvent += OnPointerExitEvent;
+        }
     }
 
     public void ClosePanel()
@@ -42,7 +60,7 @@ public class ShopPaneal : MonoBehaviour
     {
         if (_player.MONEY >= _totalPrice)
         {
-            print("購買完成！");
+            FindObjectOfType<StatePanel>().SetSateText("<color=yellow>" + "購買完成" + "</color>"); //顯示StatePanel
             _npc.ChangeMessage(_npc._npcFinishedMessage);
 
             for (int i = 0; i < shopSlots.Length; i++)
@@ -56,7 +74,7 @@ public class ShopPaneal : MonoBehaviour
         }
         else
         {
-            print("購買失敗，您的金幣不足！");
+            FindObjectOfType<StatePanel>().SetSateText("<color=red>" + "購買失敗，您的金幣不足！" + "</color>"); //顯示StatePanel
             _npc.ChangeMessage(_npc._npcNonMoneyMessage);
             ResetShopPanel();
             shopPanel.SetActive(false);
