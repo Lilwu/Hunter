@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ShopSlot : MonoBehaviour
+public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Item item;
     public Text itemAmount;
@@ -16,6 +18,15 @@ public class ShopSlot : MonoBehaviour
     private int _itemamount;
     private int _itemprice;
     private Color normalColor = Color.white;
+
+    //商品顯示價錢Tooltip 20190417
+    public event Action<ShopSlot> OnPointerEnterEvent;
+    public event Action<ShopSlot> OnPointerExitEvent;
+
+    private void Awake()
+    {
+        inventory = FindObjectOfType<Inventory>();
+    }
 
     private void Start()
     {
@@ -64,5 +75,19 @@ public class ShopSlot : MonoBehaviour
         _itemamount = 0;
         itemAmount.text = _itemamount.ToString();
         itemPrice.text = (_itemamount * _itemprice).ToString();
+    }
+
+    //商品顯示價錢Tooltip 20190417
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (OnPointerEnterEvent != null)
+            OnPointerEnterEvent(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        //tooltip.HideTooltip();
+        if (OnPointerExitEvent != null)
+            OnPointerExitEvent(this);
     }
 }
