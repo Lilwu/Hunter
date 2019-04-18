@@ -11,7 +11,6 @@ public class MonsterHealth : MonoBehaviour
     public AudioClip hurtClip;
     public AudioClip hitClip;
     public AudioClip deathClip;
-
     public Material m_material;
 
     //HUD
@@ -40,16 +39,19 @@ public class MonsterHealth : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         m_audioSource = GetComponent<AudioSource>();
-        missionManager = FindObjectOfType<MissionManager>();
+
     }
 
     private void Start()
     {
         //HUD
+        main_camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        missionManager = FindObjectOfType<MissionManager>();
         maxHealth = GetComponent<Monster>().m_maxHp;
         currentHealth = GetComponent<Monster>().m_hp;
         _name = GetComponent<Monster>().m_name;
         m_nameText.text = _name;
+
     }
 
     public void TakeDamge(int damage)
@@ -80,7 +82,8 @@ public class MonsterHealth : MonoBehaviour
 
     public void Death()
     {
-        print("消滅了" + _name);
+        FindObjectOfType<StatePanel>().SetSateText("消滅了" + _name); //顯示StatePanel
+
         _animator.SetTrigger("IsDead");
         m_audioSource.PlayOneShot(deathClip);
         isDead = true;
@@ -94,10 +97,10 @@ public class MonsterHealth : MonoBehaviour
         GetComponent<AudioSource>().clip = null;
         GetComponent<Monster>().FallMoney(this.transform);
         GetComponent<Monster>().GetExp();
+        GetComponent<Monster>().FallItem();
 
         if(missionManager.ISDESTROYMISSION == true && missionManager.MISSIONMOSNAME == _name)
         {
-            Debug.Log("目前進行任務中" + _name);
             if(MissionActionEvent != null)
             {
                 MissionActionEvent();
