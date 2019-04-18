@@ -18,7 +18,6 @@ public class InventoryManager : MonoBehaviour
     public static event WeaponInHandAction WeaponInHandEvent;
 
     //魔法冷卻
-    [SerializeField] GameObject warningPanel; //通知玩家冷卻期間無法連續使用魔法
     private float timer; //計算器初始值
     private bool isStartTimer; //是否開始計算時間
     private HotkeySlot isHotkeySlot; //使用中的熱鍵
@@ -35,8 +34,8 @@ public class InventoryManager : MonoBehaviour
         inventory = GetComponentInChildren<Inventory>();
         equipmentPanel = GetComponentInChildren<EquipmentPanel>();
         hotkeyBar = GetComponentInChildren<HotkeyBar>();
-        //滑鼠游標移動物品 20190221
 
+        //滑鼠游標移動物品 20190221
         //Setup Events:
         //Right Click
         inventory.OnRightClickEvent += InventoryRightClick;
@@ -44,9 +43,11 @@ public class InventoryManager : MonoBehaviour
         //Pointer Enter
         inventory.OnPointerEnterEvent += ShowTooltip;
         equipmentPanel.OnPointerEnterEvent += ShowTooltip;
+        hotkeyBar.OnPointerEnterEvent += ShowTooltip;
         //Pointer Exit
         inventory.OnPointerExitEvent += HideTooltip;
         equipmentPanel.OnPointerExitEvent += HideTooltip;
+        hotkeyBar.OnPointerExitEvent += HideTooltip;
         //Begin Drag
         inventory.OnBeginDragEvent += BeginDrag;
         equipmentPanel.OnBeginDragEvent += BeginDrag;
@@ -72,7 +73,6 @@ public class InventoryManager : MonoBehaviour
         {
             Unequip((EquippableItem)itemSlot.Item);
         }
-
     }
 
     private void InventoryRightClick(ItemSlot itemSlot)
@@ -229,13 +229,11 @@ public class InventoryManager : MonoBehaviour
 
         if (dropItemSlot is EquipmentSlot)
         {
-            print("test1");
             if (dragEquipItem != null) dragEquipItem.Equip(this);
             if (dropEquipItem != null) dropEquipItem.Unequip(this);
         }
         if (draggedSlot is EquipmentSlot)
         {
-            print("test2");
             if (dragEquipItem != null) dragEquipItem.Unequip(this);
             if (dropEquipItem != null) dropEquipItem.Equip(this);
         }
@@ -292,7 +290,7 @@ public class InventoryManager : MonoBehaviour
 
 
                 //裝備武器時同步到玩家手上 20190313
-                if (item.equipmentType == EquipmentType.Weapon)
+                if (item.equipmentType == EquipmentType.武器)
                 {
                     Object obj = Resources.Load(item.ItemName);
                     GameObject gobj = Instantiate(obj) as GameObject;
@@ -322,7 +320,7 @@ public class InventoryManager : MonoBehaviour
             item.Unequip(this);
             inventory.AddItem(item);
 
-            if (item.equipmentType == EquipmentType.Weapon)
+            if (item.equipmentType == EquipmentType.武器)
             {
                 Destroy(Hand.transform.GetChild(0).gameObject);
             }
@@ -341,12 +339,10 @@ public class InventoryManager : MonoBehaviour
             {
                 hotkeyBar.SetHotkeyItem(dropItemSlot);
                 //Instantiate(draggedSlot).Item = (RestorableItem)draggedSlot.Item;
-                print("test3");
             }
             if (dropToHotkeyItem != null)
             {
                 dropItemSlot.Item = (RestorableItem)dropItemSlot.Item;
-                print("test4");
             }
         }
         if (draggedSlot is HotkeySlot)
@@ -381,19 +377,16 @@ public class InventoryManager : MonoBehaviour
 
         if(hotkeySlot.Item is MagicalcardItem && isStartTimer != true)
         {
-            warningPanel.SetActive(false);
             //使用魔法書
             MagicalcardItem magicalcard = (MagicalcardItem)hotkeySlot.Item;
             magicalcard.Use(this);
-            //print(hotkeySlot);
             isStartTimer = true;
             isHotkeySlot = hotkeySlot;
             isMagicCard = magicalcard;
         }
         else if((hotkeySlot.Item is MagicalcardItem && isStartTimer != false)) //警告：冷卻時間無法持續使用
         {
-            warningPanel.SetActive(true);
-            warningPanel.GetComponentInChildren<Text>().text = "- " + "目前無法使用" + isMagicCard.ItemName + " -";
+            FindObjectOfType<StatePanel>().SetSateText("<color=red>" + "目前無法使用該魔法" + "</color>"); //顯示StatePanel
         }
 
     }
@@ -413,9 +406,7 @@ public class InventoryManager : MonoBehaviour
                 isHotkeySlot.coldtimeImage.fillAmount = 0;
                 timer = 0;
                 isStartTimer = false;
-                warningPanel.SetActive(false);
             }
         }
-
     }
 }
