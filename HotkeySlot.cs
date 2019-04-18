@@ -25,6 +25,4 @@ public class HotkeySlot : ItemSlot
         MagicalcardItem magicalcard = item as MagicalcardItem;
         return restorableItem || magicalcard != null;
     }
-
-
 }
