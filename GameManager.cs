@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
+using UnityEngine.Playables;
 
 public class GameManager : MonoBehaviour
 {
-    public Transform bornPoint;
     public AudioClip clickClip;
     private AudioSource audioSource;
 
@@ -14,9 +10,15 @@ public class GameManager : MonoBehaviour
     public MoneyTooltip moneyTooltip;
     public ShopPaneal[] shopPaneals;
 
+    //遊戲初始化獎勵 20190419
+    public Item present;
+    public GameObject startPanel;
+    static bool isPresent;
+
     private void Awake()
     {
-        FindObjectOfType<Player>().gameObject.transform.localPosition = transform.position;
+        print("GameManager");
+        GameObject.Find("Character").transform.localPosition = transform.position;
         audioSource = GetComponent<AudioSource>();
 
         //商品價錢顯示 20190417
@@ -88,5 +90,33 @@ public class GameManager : MonoBehaviour
     private void HideMoneyTooltip(ShopSlot shopSlot)
     {
         moneyTooltip.HideTooltip();
+    }
+
+    public void AcceptPresent()
+    {
+        audioSource.PlayOneShot(clickClip);
+        FindObjectOfType<Inventory>().AddItem(present);
+        FindObjectOfType<StatePanel>().SetSateText("<color=green>" + "獲得 " + "</color>" + "<color=green>" + present.ItemName + "</color>"); //顯示StatePanel
+   
+        startPanel.SetActive(false);
+        FindObjectOfType<CameraFollow>().enabled = true;
+        FindObjectOfType<PlayerController>().enabled = true;
+        isPresent = true;
+    }
+
+    public void StartAnnounce()
+    {
+        if(!isPresent && GetComponent<PlayableControl>().pb.state == PlayState.Paused)
+        {
+            startPanel.SetActive(true);
+
+            FindObjectOfType<CameraFollow>().enabled = false;
+            FindObjectOfType<PlayerController>().enabled = false;
+        }
+    }
+
+    public bool ISPRESENT
+    {
+        get { return isPresent; }
     }
 }
