@@ -22,6 +22,11 @@ public class CameraFollow : MonoBehaviour
     public float maxDistence = 5;
     private Vector3 cameraPosition;
 
+    private void Awake()
+    {
+        target = GameObject.Find("Character").transform;
+    }
+
     private void Start()
     {
         _cameraOffset = transform.position - target.position;
