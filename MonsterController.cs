@@ -21,10 +21,6 @@ public class MonsterController : MonoBehaviour
     private int attackDamage;
     private PlayerHealth playerHealth;
 
-    private float timer;
-    private bool playerisDeath = false;
-
-
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -47,9 +43,9 @@ public class MonsterController : MonoBehaviour
         _animator.SetBool("IsRun", true);
     }
 
-    public void TakeDamageToPlayer() 
+    public void TakeDamageToPlayer(float value) 
     {
-        _audiosource.PlayOneShot(GetComponent<MonsterHealth>().hitClip , 0.2f);
+        _audiosource.PlayOneShot(GetComponent<MonsterHealth>().hitClip , value);
         playerHealth.TakeDamge(attackDamage);
     }
 
@@ -58,6 +54,7 @@ public class MonsterController : MonoBehaviour
         if (other.tag == "Player")
         {
             InAttackRange = true;
+            if(m_material != null)
             m_material.SetFloat("_OutlineWidth", 1.05f);
         }
 
@@ -75,6 +72,7 @@ public class MonsterController : MonoBehaviour
         if (other.tag == "Player")
         {
             InAttackRange = false;
+            if(m_material != null)
             m_material.SetFloat("_OutlineWidth", 1.0f);
         }
 
@@ -86,16 +84,42 @@ public class MonsterController : MonoBehaviour
 
     private void Update()
     {
-        if (dis > 1.5f)
+        if (gameObject.tag == "Dragon")
         {
-            GoToPlayer();
-        }
-        else if(dis <= 1f && dis > 0f)
-        {
-            _animator.SetBool("IsRun", false);
-            _animator.SetBool("IsAttack", true);
+            if (dis > 1.7f)
+            {
+                GoToPlayer();
+            }
+            else if (dis <= 1.7f && dis > 0f && !playerHealth.ISDEATH)
+            {
+                _animator.SetBool("IsRun", false);
+                _animator.SetBool("IsAttack", true);
+            }
+            else if (playerHealth.ISDEATH)
+            {
+                _animator.SetBool("IsAttack", false);
+            }
+
+            dis = Vector3.Distance(player.position, transform.position);
         }
 
-        dis = Vector3.Distance(player.position, transform.position);
+        if(gameObject.tag == "Monster")
+        {
+            if (dis > 1f)
+            {
+                GoToPlayer();
+            }
+            else if (dis <= 1f && dis > 0f && !playerHealth.ISDEATH)
+            {
+                _animator.SetBool("IsRun", false);
+                _animator.SetBool("IsAttack", true);
+            }
+            else if (playerHealth.ISDEATH)
+            {
+                _animator.SetBool("IsAttack", false);
+            }
+
+            dis = Vector3.Distance(player.position, transform.position);
+        }
     }
 }
