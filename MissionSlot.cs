@@ -63,7 +63,7 @@ public class MissionSlot : MonoBehaviour
             _missionButton.sprite = btn_Insufficient;
             _missionButton.GetComponent<Button>().enabled = false;
         }
-        else if(_player.LV >= mission.missionLevel && mission.ISFINISHED == false && missionManager.ISCOLLECTIONMISSION == false && missionManager.ISDESTROYMISSION == false && missionManager.ISMISSION == false)
+        else if (_player.LV >= mission.missionLevel && !mission.ISFINISHED && !missionManager.ISCOLLECTIONMISSION && !missionManager.ISDESTROYMISSION && !missionManager.ISMISSION)
         {
             _missionCondition.color = normalColor;
             _missionButton.sprite = btn_Accept;
@@ -78,6 +78,14 @@ public class MissionSlot : MonoBehaviour
         else if(missionManager.ISMISSION == mission)
         {
             _missionButton.sprite = btn_Inprogress;
+        }
+
+        for (int i = 0; i < missionManager.finishedMissions.Count; i++)
+        {
+            if (missionManager.finishedMissions[i] == mission)
+            {
+                _missionButton.sprite = btn_Finished;
+            }
         }
     }
 
@@ -103,7 +111,7 @@ public class MissionSlot : MonoBehaviour
                 {
                     inventory.AddItem(mission._missionAwardsList[i]);
                     //顯示StatePanel
-                    FindObjectOfType<StatePanel>().SetSateText("您得到了" + mission._missionAwardsList[i]);
+                    FindObjectOfType<StatePanel>().SetSateText("您得到了" + mission._missionAwardsList[i].ItemName);
                 }
             }
             exclamationMarkOpen.SetActive(false);
@@ -114,6 +122,7 @@ public class MissionSlot : MonoBehaviour
             inventoryInput.GetComponent<AudioSource>().PlayOneShot(inventoryInput.awardClip);
 
             GetComponentInParent<MissionPanel>().ResetOtherMission();
+            missionManager.finishedMissions.Add(mission);
         }
         else if(_missionButton.sprite == btn_Accept && missionManager.ISCOLLECTIONMISSION == false && missionManager.ISDESTROYMISSION == false)
         {
