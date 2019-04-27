@@ -11,7 +11,7 @@ public enum MissionItemType
 public class MissionItem : Item
 {
     public string itemDescription;
-    public MissionType missionType;
+    public MissionItemType missionType;
 
     public override Item GetCopy()
     {
