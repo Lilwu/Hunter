@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -19,12 +18,7 @@ public class Item : ScriptableObject
     public int MaximumStacks = 1;
 
 
-    //20190222 
-    private void OnValidate()
-    {
-        string path = AssetDatabase.GetAssetPath(this);
-        id = AssetDatabase.AssetPathToGUID(path);
-    }
+    //20190222
 
     public virtual Item GetCopy()
     {
