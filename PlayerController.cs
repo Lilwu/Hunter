@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip fireDanceClip;
     public AudioClip rightWalkClip;
     public AudioClip leftWalkClip;
+    public AudioClip deathSoundClip;
     private AudioClip itemAudio;
 
     //MOVEMENT
@@ -42,13 +43,11 @@ public class PlayerController : MonoBehaviour
     private float Gravity = 20.0f;
     private Vector3 _moveDir = Vector3.zero;
     private bool actionSwitch;
-    private bool mosInRange;
     private bool moneyInRange;
     private bool npcInRange;
 
     //Click TO Move  20190328
     private NavMeshAgent nav;
-    private bool _playerRunning = false;
 
     //Cursor
     public Texture2D cursorMain;
@@ -69,6 +68,8 @@ public class PlayerController : MonoBehaviour
     public delegate void MissionItemAction();
     public static event MissionItemAction MissionItemActionEvent;
 
+    //新攻擊系統 20190418
+    private GameObject targetMonster;
 
     private void Awake()
     {
@@ -87,7 +88,6 @@ public class PlayerController : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         actionSwitch = false;
         WeaponInHand = false;
-        mosInRange = false;
         _anim.SetBool("IsStart", true);
         _audioSource.PlayOneShot(restoreSound);
     }
@@ -101,14 +101,16 @@ public class PlayerController : MonoBehaviour
         _player.AddWeaponAttack(w_attack.Damge);
     }
 
+    private void WeaponOutHandAction()
+    {
+        WeaponInHand = false;
+        _player.RemoveWeaponAttack();
+    }
+
     private void OnEnable()
     {
         InventoryManager.WeaponInHandEvent += WeaponInHandAction;
-    }
-
-    private void OnDisable()
-    {
-        InventoryManager.WeaponInHandEvent -= WeaponInHandAction;
+        InventoryManager.WeaponOutHandEvent += WeaponOutHandAction;
     }
 
     private void Update()
@@ -238,7 +240,7 @@ public class PlayerController : MonoBehaviour
                 hit_item = true;
             }
 
-            else if (hit.collider.tag == "Monster" && !EventSystem.current.IsPointerOverGameObject())
+            else if (hit.collider.tag == "Monster" || hit.collider.tag == "Dragon" && !EventSystem.current.IsPointerOverGameObject())
             {
                 Cursor.SetCursor(cursorBattle, hotSpot, cursorMode);
                 hit_enemy = true;
@@ -286,16 +288,14 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(transform.position + Vector3.up, transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * 2.0f, Color.cyan);
 
-
         if (WeaponInHand)
         {
             _audioSource.PlayOneShot(itemAudio);
-        }
+            targetMonster = Hand.GetComponentInChildren<AttackSystem>().monsterModel;
 
-        if(Physics.Raycast(ray, out RaycastHit hit, 1.0f))
-        {
-            if (hit.collider.tag == "Monster")
+            if (targetMonster != null)
             {
+                transform.LookAt(targetMonster.transform.position);
                 int r_attack = Random.Range(_player.ATTACK - 15, _player.ATTACK + 20);
 
                 FindObjectOfType<MonsterHealth>().TakeDamge(r_attack);
@@ -303,6 +303,23 @@ public class PlayerController : MonoBehaviour
                 FindObjectOfType<DamageFont>().playerAttackPoint = r_attack;
 
                 Debug.Log(r_attack);
+            }
+        }
+
+        else if(!WeaponInHand)
+        {
+            if (Physics.Raycast(ray, out RaycastHit hit, 1.0f))
+            {
+                if (hit.collider.tag == "Monster" || hit.collider.tag == "Dragon")
+                {
+                    int r_attack = Random.Range(_player.ATTACK - 15, _player.ATTACK + 20);
+
+                    FindObjectOfType<MonsterHealth>().TakeDamge(r_attack);
+                    FindObjectOfType<GenerateFont>().AttackPointFont(r_attack);
+                    FindObjectOfType<DamageFont>().playerAttackPoint = r_attack;
+
+                    Debug.Log(r_attack);
+                }
             }
         }
     }
@@ -320,8 +337,8 @@ public class PlayerController : MonoBehaviour
 
         if (mItemToPickup != null)
         {
-            mItemToPickup.OnPickUp();
             mItemToPickup.PickupItem(mItemToPickup);
+            FindObjectOfType<StatePanel>().SetSateText("撿起" + mItemToPickup.setting.ItemName); //顯示StatePanel 20190419
 
             if (missionManager.ISCOLLECTIONMISSION == true && missionManager.MISSIONITEMNAME == mItemToPickup.setting.ItemName)
             {
@@ -332,12 +349,14 @@ public class PlayerController : MonoBehaviour
                     MissionItemActionEvent();
                 }
             }
+
+            mItemToPickup.OnPickUp();
         }
 
         if(mMoneyToPickup != null)
         {
-            mMoneyToPickup.OnPickUp();
             mMoneyToPickup.AddPlayerMoney();
+            mMoneyToPickup.OnPickUp();
         }
 
         inventoryInput.CloseMessagePanel();
@@ -356,7 +375,7 @@ public class PlayerController : MonoBehaviour
     private Money mMoneyToPickup = null;
     private NPC mNpcToShoping = null;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         ItemBase item = other.GetComponent<ItemBase>();
         if (item != null && other.tag == "Item")
