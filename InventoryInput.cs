@@ -11,10 +11,10 @@ public class InventoryInput : MonoBehaviour
     [SerializeField] GameObject npcMessagePanelGameObject;
     [SerializeField] GameObject minimenuPanelGameObject;
     [SerializeField] GameObject settingPanelGameObject;
+    [SerializeField] GameObject missionPanelGameObject;
+
     [SerializeField] ItemTooltip itemTooltip;
-    [SerializeField] InventoryManager inventoryManager;
     [SerializeField] Camera minimap;
-    [SerializeField] AudioSource musicAudio;
     [SerializeField] Slider musicAdjValue;
 
     //20190227 SetHotkey
@@ -25,6 +25,7 @@ public class InventoryInput : MonoBehaviour
     [SerializeField] KeyCode[] toggleInventoryKeys;
     [SerializeField] KeyCode[] toggleMinimenuKeys;
     [SerializeField] KeyCode[] toggleSettingKeys;
+    [SerializeField] KeyCode[] toggleMissionKeys;
 
     public AudioClip clickClip;
     public AudioClip awardClip;
@@ -51,7 +52,7 @@ public class InventoryInput : MonoBehaviour
     void Update()
     {
         //背景音樂調整
-        musicAudio.volume = musicAdjValue.value;
+        GameObject.Find("GameManager").GetComponent<AudioSource>().volume = musicAdjValue.value;
 
         for (int i = 0; i < toggleInventoryKeys.Length; i++)
         {
@@ -87,6 +88,15 @@ public class InventoryInput : MonoBehaviour
             if (Input.GetKeyDown(toggleSettingKeys[i]))
             {
                 settingPanelGameObject.SetActive(!settingPanelGameObject.activeSelf);
+                break;
+            }
+        }
+
+        for (int i = 0; i < toggleMissionKeys.Length; i++)
+        {
+            if (Input.GetKeyDown(toggleMissionKeys[i]))
+            {
+                missionPanelGameObject.SetActive(!missionPanelGameObject.activeSelf);
                 break;
             }
         }
