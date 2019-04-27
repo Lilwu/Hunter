@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class Monster : MonoBehaviour
 {
@@ -13,12 +14,16 @@ public class Monster : MonoBehaviour
     public int m_exp;
 
     public Item[] m_fallItem;
+    public Item[] m_fallMissionItem;
+    public MissionManager missionManager;
     private Vector3 itemPos;
+    
 
     private void Awake()
     {
         m_hp = m_maxHp;
         itemPos = new Vector3(1, 0, 0);
+        missionManager = FindObjectOfType<MissionManager>();
     }
 
     public void FallMoney(Transform transform)
@@ -43,6 +48,21 @@ public class Monster : MonoBehaviour
             {
                 GameObject fallitems = Resources.Load(m_fallItem[i].ItemName) as GameObject;
                 Instantiate(fallitems).transform.position = transform.GetChild(0).transform.position + itemPos;
+            }
+        }
+    }
+
+    public void FallMissionItem()
+    {
+        if(m_fallMissionItem != null && missionManager.ISCOLLECTIONMISSION)
+        {
+            for (int i = 0; i < m_fallMissionItem.Length; i++)
+            {
+                if(missionManager.MISSIONITEMNAME == m_fallMissionItem[i].ItemName)
+                {
+                    GameObject fallmissionitems = Resources.Load(m_fallMissionItem[i].ItemName) as GameObject;
+                    Instantiate(fallmissionitems).transform.position = transform.GetChild(0).transform.position + itemPos;
+                }
             }
         }
     }
