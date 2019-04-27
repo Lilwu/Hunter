@@ -35,10 +35,10 @@ public class Player : MonoBehaviour
             instanceUI = playerUI;
             DontDestroyOnLoad(playerUI);
 
-            _maxHp = 999;
+            _maxHp = 500;
             _hp = _maxHp;
 
-            _maxMp = 499;
+            _maxMp = 300;
             _mp = _maxMp;
             _money = 300;
             _attack = 20;
@@ -50,7 +50,6 @@ public class Player : MonoBehaviour
         {
             string sceneName = SceneManager.GetActiveScene().name;
             print("刪除" + sceneName + "的" + name);
-            transform.position = GameObject.Find("BornPoint").transform.position;
             Destroy(gameObject);
             Destroy(playerUI);
         }
@@ -79,6 +78,11 @@ public class Player : MonoBehaviour
     {
         _attack += attack;
         print("目前攻擊力為：" + _attack);
+    }
+
+    public void RemoveWeaponAttack()
+    {
+        _attack = 20;
     }
 
     public void AddPlayerExp(int exp)
@@ -135,21 +139,25 @@ public class Player : MonoBehaviour
         {
             _lv = 2;
             LevelUpEffect();
+            HpMpUp(50);
         }
         else if (_exp >= 80 && _exp < 150 && _lv != 3)
         {
             _lv = 3;
             LevelUpEffect();
+            HpMpUp(60);
         }
         else if (_exp >= 150 && _exp < 250 && _lv != 4)
         {
             _lv = 4;
             LevelUpEffect();
+            HpMpUp(70);
         }
         else if (_lv >= 250 && _lv != 5)
         {
             _lv = 5;
             LevelUpEffect();
+            HpMpUp(80);
         }
     }
 
@@ -159,5 +167,13 @@ public class Player : MonoBehaviour
         levelupEffect.Play();
         inventoryInput.GetComponent<AudioSource>().PlayOneShot(inventoryInput.awardClip);
         FindObjectOfType<StatePanel>().SetSateText("<color=green>" + "恭喜！等級提升為： " + "</color>" + "<color=green>" + _lv + "</color>"); //顯示StatePanel
+    }
+
+    private void HpMpUp(int value)
+    {
+        _maxHp += value;
+        _maxMp += value;
+        GetComponent<PlayerHealth>().ResetHealth();
+        GetComponent<PlayerMagic>().ResetMagic();
     }
 }
