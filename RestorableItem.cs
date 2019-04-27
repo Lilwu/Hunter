@@ -9,6 +9,7 @@ public enum RestoreItemType
     藥水,
     卷軸,
     修復,
+    禮物,
 }
 
 [CreateAssetMenu]
@@ -20,6 +21,11 @@ public class RestorableItem : Item
     public int add_Grind;   //恢復磨損度
     [Space]
     public bool BackToTown;   //傳送回村莊
+
+    [Header("禮物")] //新增新手禮盒 20190418
+    public bool IsPresent;
+    public Item[] presents; //禮物
+    private Inventory inventory;
 
     public RestoreItemType restoreItemType;
 
@@ -65,6 +71,18 @@ public class RestorableItem : Item
         else if (BackToTown)
         {
             FindObjectOfType<GameLoader>().LoadScene(1);
+        }
+
+        else if (IsPresent)
+        {
+            inventory = FindObjectOfType<Inventory>();
+
+            for (int i = 0; i < presents.Length; i++)
+            {
+                inventory.AddItem(presents[i]);
+                FindObjectOfType<StatePanel>().SetSateText("<color=yellow>" + "獲得" + "</color>" + "<color=yellow>" + presents[i].ItemName + "</color>");
+                FindObjectOfType<InventoryInput>().GetComponent<AudioSource>().PlayOneShot(FindObjectOfType<InventoryInput>().awardClip);
+            }
         }
     }
 
