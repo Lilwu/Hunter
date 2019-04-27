@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class MissionManager : MonoBehaviour
 {
-    public GameObject missionPanel;
     public GameObject missionMsgPanel;
     public ParticleSystem awardEffect;
     [SerializeField] GameObject inprogressText;
@@ -24,6 +23,8 @@ public class MissionManager : MonoBehaviour
     protected string missionMosName;
     protected string missionItemName;
 
+    public List<Mission> finishedMissions; //完成任務清單 20190426
+
     private void DestroyMissionMos()
     {
         if (missionAmount < mission.missionContentAmount)
@@ -37,7 +38,7 @@ public class MissionManager : MonoBehaviour
 
     private void PickupMissionitem()
     {
-        if(missionAmount < mission.missionContentAmount)
+        if (missionAmount < mission.missionContentAmount)
         {
             missionAmount++;
             _collectionText.text = "蒐集" + missionItemName + "(" + missionAmount + "/" + mission.missionContentAmount + ")";
@@ -93,7 +94,7 @@ public class MissionManager : MonoBehaviour
 
     public void AcceptMission(Mission addMission)
     {
-        if(mission == null)
+        if (mission == null)
         {
             inprogressText.SetActive(true);
             mission = addMission;
@@ -133,7 +134,7 @@ public class MissionManager : MonoBehaviour
         _destroyText.text = "";
         _collectionText.text = "";
         _missionName.text = "任務名稱：";
-        gameObject.SetActive(false);
+        missionMsgPanel.SetActive(false);
     }
 
     public bool ISDESTROYMISSION
