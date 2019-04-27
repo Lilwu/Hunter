@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Serialization;
 
 public class Inventory : MonoBehaviour
 {
@@ -20,7 +18,6 @@ public class Inventory : MonoBehaviour
     public event Action<ItemSlot> OnEndDragEvent;
     public event Action<ItemSlot> OnDragEvent;
     public event Action<ItemSlot> OnDropEvent;
-
 
     //滑鼠游標移動物品 20190221
     private void Start()
@@ -40,7 +37,6 @@ public class Inventory : MonoBehaviour
     private void OnValidate()
     {
             GetComponentsInChildren(includeInactive: true, result: itemSlots);
-           
     }
 
     public bool AddItem(Item item)
