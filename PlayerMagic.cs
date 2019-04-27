@@ -20,12 +20,7 @@ public class PlayerMagic : MonoBehaviour
 
     void Start()
     {
-        maxMagic = GetComponent<Player>().MaxMP;
-        currentMagic = GetComponent<Player>().MP;
-        magicText.text = currentMagic + "/" + maxMagic;
-
-        print("最大魔力為：" + maxMagic);
-        print("目前魔力為：" + currentMagic);
+        ResetMagic();
     }
 
     public void AddMp(int amount)
@@ -76,5 +71,15 @@ public class PlayerMagic : MonoBehaviour
             playerMagic.fillAmount = currentMagic / maxMagic;
             magicText.text = currentMagic + "/" + maxMagic;
         }
+    }
+
+    public void ResetMagic()
+    {
+        maxMagic = GetComponent<Player>().MaxMP;
+        currentMagic = GetComponent<Player>().MP;
+        magicText.text = currentMagic + "/" + maxMagic;
+
+        print("最大魔力為：" + maxMagic);
+        print("目前魔力為：" + currentMagic);
     }
 }
