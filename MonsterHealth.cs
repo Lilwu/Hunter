@@ -35,6 +35,10 @@ public class MonsterHealth : MonoBehaviour
     public delegate void MissionAction();
     public static event MissionAction MissionActionEvent;
 
+    //END Animation
+    public GameObject endTimeline;
+    public GameObject endEvenetPanel;
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -68,7 +72,7 @@ public class MonsterHealth : MonoBehaviour
         Instantiate(bloody, transform.GetChild(0)).transform.position = transform.position;
         Instantiate(attckEffect, transform.GetChild(0)).transform.position = transform.position;
 
-        gameObject.transform.position -= Vector3.back * 2;
+        gameObject.transform.position -= Vector3.back * 1;
 
         //HUD
         currentHealth -= damage;
@@ -98,8 +102,19 @@ public class MonsterHealth : MonoBehaviour
         GetComponent<Monster>().FallMoney(this.transform);
         GetComponent<Monster>().GetExp();
         GetComponent<Monster>().FallItem();
+        GetComponent<Monster>().FallMissionItem();
 
-        if(missionManager.ISDESTROYMISSION == true && missionManager.MISSIONMOSNAME == _name)
+        //END Animation
+        if(endTimeline != null)
+        {
+            FindObjectOfType<GameManager>().FinalSound();
+            FindObjectOfType<CameraFollow>().enabled = false;
+            FindObjectOfType<PlayerController>().enabled = false;
+            endTimeline.SetActive(true);
+            Invoke("OpenEndPanel", 3.0f);
+        }
+
+        if (missionManager.ISDESTROYMISSION == true && missionManager.MISSIONMOSNAME == _name)
         {
             if(MissionActionEvent != null)
             {
@@ -111,14 +126,22 @@ public class MonsterHealth : MonoBehaviour
     public void StartSinking()
     {
         isSinking = true;
-        Destroy(gameObject, 3f);
+        Destroy(gameObject, 1.5f);
+    }
+
+    public void OpenEndPanel()
+    {
+        endEvenetPanel.SetActive(true);
     }
 
     private void Update()
     {
         //血條追隨攝影機
-        m_healthBar.transform.LookAt(m_healthBar.transform.position + main_camera.transform.rotation * Vector3.back,
+        if(m_healthBar != null)
+        {
+            m_healthBar.transform.LookAt(m_healthBar.transform.position + main_camera.transform.rotation * Vector3.back,
                                         main_camera.transform.rotation * Vector3.up);
+        }
 
         //動畫完成機制 20190310
         BS = _animator.GetCurrentAnimatorStateInfo(0);
