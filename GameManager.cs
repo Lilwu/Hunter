@@ -4,6 +4,7 @@ using UnityEngine.Playables;
 public class GameManager : MonoBehaviour
 {
     public AudioClip clickClip;
+    public AudioClip finalSoundClip;
     private AudioSource audioSource;
 
     //商品金額顯示 20190417
@@ -17,7 +18,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        print("GameManager");
         GameObject.Find("Character").transform.localPosition = transform.position;
         audioSource = GetComponent<AudioSource>();
 
@@ -65,6 +65,11 @@ public class GameManager : MonoBehaviour
     private void CloseScenePanel()
     {
         GameObject.Find("ScenePanel").SetActive(false);
+    }
+
+    public void FinalSound()
+    {
+        audioSource.PlayOneShot(finalSoundClip);
     }
 
     //商品顯示價錢Tooltip 20190417
