@@ -28,14 +28,6 @@ public class StatePanel : MonoBehaviour
             }
         }
     }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Z))
-        {
-            SetSateText("測試中01");
-        }
-    }
 }
 
 
