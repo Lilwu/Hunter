@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class ItemBase : MonoBehaviour
 {
-    [SerializeField] Inventory inventory;
-    [SerializeField] InventoryInput inventoryInput;
+    //public Inventory inventory;
     public Item setting;
     public AudioClip itemClip;
     private AudioSource audioSource;
@@ -17,8 +16,6 @@ public class ItemBase : MonoBehaviour
 
     private void OnValidate()
     {
-        inventory = FindObjectOfType<Inventory>();
-        inventoryInput = FindObjectOfType<InventoryInput>();
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -34,7 +31,7 @@ public class ItemBase : MonoBehaviour
 
     public void PickupItem(ItemBase item)
     {
-        inventory.AddItem(setting);
+        FindObjectOfType<Inventory>().AddItem(setting);
     }
 
     private void Update()
@@ -43,7 +40,8 @@ public class ItemBase : MonoBehaviour
         if (itemHUD != null)
         {
             itemHUD.transform.LookAt(itemHUD.transform.position + main_camera.transform.rotation * Vector3.back,
-                                        main_camera.transform.rotation * Vector3.up);
+            main_camera.transform.rotation * Vector3.up);
         }
+
     }
 }
